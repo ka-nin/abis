@@ -8,6 +8,7 @@ import {
   CheckCircleIcon,
 } from '../../components/icons'
 import BrandLockup from '../../components/BrandLockup'
+import scanGroup from '../../assets/Group.png'
 
 function TrustItem({ icon, label }) {
   return (
@@ -36,7 +37,7 @@ function ScanIllustration() {
 
       {/* center card with fingerprint */}
       <div className="relative flex h-[46%] w-[46%] items-center justify-center rounded-full bg-white shadow-xl shadow-blue-900/5">
-        <FingerprintMark className="h-[500px] w-[500px] text-blue-700 translate-y-[-30px]" />
+        <img src={scanGroup} alt="" className="h-[92%] w-[92%] object-contain" />
       </div>
 
       {/* Verified card */}
