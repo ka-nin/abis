@@ -1,122 +1,13 @@
-function FingerprintMark({ className = '' }) {
-  const radii = [8, 14, 20, 26, 32, 38]
-  return (
-    <svg viewBox="0 0 100 100" fill="none" className={className}>
-      {radii.map((r, i) => (
-        <path
-          key={r}
-          d={`M ${50 - r} 62 A ${r} ${r} 0 0 1 ${50 + r} 62`}
-          stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="round"
-          opacity={1 - i * 0.12}
-        />
-      ))}
-      <circle cx="50" cy="62" r="2.6" fill="currentColor" />
-    </svg>
-  )
-}
-
-function ShieldCheckIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <path
-        d="M12 3l7 3v5c0 4.5-3 8.2-7 9.4-4-1.2-7-4.9-7-9.4V6l7-3z"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M9 12l2 2 4-4.2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function LockIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <rect
-        x="5"
-        y="10.5"
-        width="14"
-        height="9.5"
-        rx="2"
-        stroke="currentColor"
-        strokeWidth="1.6"
-      />
-      <path
-        d="M8 10.5V8a4 4 0 0 1 8 0v2.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
-function BadgeCheckIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.6" />
-      <path
-        d="M8.5 12.2l2.2 2.2 4.3-4.6"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function ArrowRightIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <path
-        d="M5 12h14M13 6l6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
-
-function HelpCircleIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
-      <path
-        d="M9.6 9.3a2.4 2.4 0 1 1 3.6 2.1c-.8.5-1.2.9-1.2 1.8"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-      />
-      <circle cx="12" cy="16.7" r="0.9" fill="currentColor" />
-    </svg>
-  )
-}
-
-function CheckCircleIcon({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="10" fill="currentColor" />
-      <path
-        d="M7.5 12.3l3 3 6-6.4"
-        stroke="white"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  )
-}
+import {
+  FingerprintMark,
+  ShieldCheckIcon,
+  LockIcon,
+  BadgeCheckIcon,
+  ArrowRightIcon,
+  HelpCircleIcon,
+  CheckCircleIcon,
+} from '../../components/icons'
+import BrandLockup from '../../components/BrandLockup'
 
 function TrustItem({ icon, label }) {
   return (
@@ -145,7 +36,7 @@ function ScanIllustration() {
 
       {/* center card with fingerprint */}
       <div className="relative flex h-[46%] w-[46%] items-center justify-center rounded-full bg-white shadow-xl shadow-blue-900/5">
-        <FingerprintMark className="h-16 w-16 text-blue-700" />
+        <FingerprintMark className="h-[500px] w-[500px] text-blue-700 translate-y-[-30px]" />
       </div>
 
       {/* Verified card */}
@@ -183,20 +74,12 @@ function ScanIllustration() {
   )
 }
 
-export default function UserLanding() {
+export default function UserLanding({ onStart }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 shadow-md shadow-blue-500/30">
-              <FingerprintMark className="h-5 w-5 text-white" />
-            </span>
-            <div className="text-left">
-              <p className="text-base font-bold leading-tight text-slate-900">ABIS</p>
-              <p className="text-xs leading-tight text-slate-400">Voter Registration Portal</p>
-            </div>
-          </div>
+          <BrandLockup />
 
           <div className="flex items-center gap-3">
             <button
@@ -237,6 +120,7 @@ export default function UserLanding() {
 
           <button
             type="button"
+            onClick={onStart}
             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-700 to-blue-500 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition-transform hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-600/30"
           >
             Start Voter Registration
