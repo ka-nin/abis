@@ -41,7 +41,7 @@ const REQUIREMENTS = [
   },
 ]
 
-export default function SelfRegistration({ onBack, onVerify }) {
+export default function Intro({ onBack, onVerify }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
@@ -106,9 +106,9 @@ export default function SelfRegistration({ onBack, onVerify }) {
           <button
             type="button"
             onClick={onVerify}
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-blue-800"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-blue-800"
           >
-            Verify ID
+            Proceed
             <ArrowRightIcon className="h-4 w-4" />
           </button>
         </div>

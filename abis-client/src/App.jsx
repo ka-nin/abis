@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import RoleSelect from './pages/RoleSelect'
 import UserLanding from './pages/user/UserLanding'
-import SelfRegistration from './pages/user/SelfRegistration'
+import Intro from './pages/user/Intro'
+import TermsCon from './pages/user/TermsCon'
+import Step1 from './pages/user/Step1'
+import Step2 from './pages/user/Step2'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 
@@ -38,8 +41,34 @@ function App() {
     return <AdminPlaceholder onBack={() => setStep('role')} />
   }
 
+  if (step === 'step2') {
+    return (
+      <Step2
+        onBack={() => setStep('step1')}
+        onVerify={() => setStep('landing')}
+        onVerifyEmail={() => setStep('landing')}
+      />
+    )
+  }
+
+  if (step === 'step1') {
+    return <Step1 onBack={() => setStep('terms')} onContinue={() => setStep('step2')} />
+  }
+
+  if (step === 'terms') {
+    return (
+      <TermsCon
+        onBack={() => setStep('register')}
+        onDecline={() => setStep('landing')}
+        onAccept={() => setStep('step1')}
+      />
+    )
+  }
+
   if (step === 'register') {
-    return <SelfRegistration onBack={() => setStep('landing')} />
+    return (
+      <Intro onBack={() => setStep('landing')} onVerify={() => setStep('terms')} />
+    )
   }
 
   if (step === 'landing') {

@@ -77,7 +77,7 @@ function ScanIllustration() {
 
 export default function UserLanding({ onStart }) {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <BrandLockup />
@@ -100,7 +100,7 @@ export default function UserLanding({ onStart }) {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:gap-8">
+      <main className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-16 px-6 py-16 sm:py-24 lg:grid-cols-2 lg:gap-8">
         <div className="text-left">
           <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700">
             <ShieldCheckIcon className="h-4 w-4" />
@@ -146,6 +146,16 @@ export default function UserLanding({ onStart }) {
 
         <ScanIllustration />
       </main>
+
+      <footer className="border-t border-slate-200/80 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 text-sm text-slate-400">
+          <p>© {new Date().getFullYear()} National Election Commission. All rights reserved.</p>
+          <span className="flex items-center gap-2 font-medium text-slate-500">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            System Online
+          </span>
+        </div>
+      </footer>
     </div>
   )
 }
