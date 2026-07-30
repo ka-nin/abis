@@ -1,6 +1,6 @@
 import abisLogo from '../assets/abis_logo.png'
 
-export default function BrandLockup() {
+export default function BrandLockup({ subtitle = 'Voter Registration Portal' }) {
   return (
     <div className="flex items-center gap-3">
       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 shadow-md shadow-blue-500/30">
@@ -8,7 +8,7 @@ export default function BrandLockup() {
       </span>
       <div className="text-left">
         <p className="text-base font-bold leading-tight text-slate-900">ABIS</p>
-        <p className="text-xs leading-tight text-slate-400">Voter Registration Portal</p>
+        <p className="text-xs leading-tight text-slate-400">{subtitle}</p>
       </div>
     </div>
   )
