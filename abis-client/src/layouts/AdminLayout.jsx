@@ -58,8 +58,8 @@ export default function AdminLayout({
   const [search, setSearch] = useState('')
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <aside className="flex w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      <aside className="flex h-full w-64 flex-shrink-0 flex-col border-r border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-5 py-5">
           <BrandLockup subtitle="National Election Commission" />
         </div>
