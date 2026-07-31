@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeftIcon, PhoneIcon } from '../../components/icons'
 import BrandLockup from '../../components/BrandLockup'
 import RegistrationStepper from '../../components/RegistrationStepper'
-
+// test
 const OTP_LENGTH = 6
 const EXPIRY_SECONDS = 119
 
