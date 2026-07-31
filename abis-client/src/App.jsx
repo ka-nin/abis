@@ -6,6 +6,8 @@ import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
 import Step2 from './pages/user/Step2'
 import Step3 from './pages/user/Step3'
+import Step4 from './pages/user/Step4'
+import Step5 from './pages/user/Step5'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -50,8 +52,22 @@ function App() {
     return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
   }
 
+  if (step === 'step5') {
+    return (
+      <Step5
+        onBack={() => setStep('step4')}
+        onSelectFace={() => setStep('landing')}
+        onSelectFingerprint={() => setStep('landing')}
+      />
+    )
+  }
+
+  if (step === 'step4') {
+    return <Step4 onBack={() => setStep('step3')} onContinue={() => setStep('step5')} />
+  }
+
   if (step === 'step3') {
-    return <Step3 onBack={() => setStep('step2')} onVerify={() => setStep('landing')} />
+    return <Step3 onBack={() => setStep('step2')} onContinue={() => setStep('step4')} />
   }
 
   if (step === 'step2') {
