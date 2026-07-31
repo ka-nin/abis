@@ -528,6 +528,22 @@ export function FilterIcon({ className = '' }) {
   )
 }
 
+export function AlertTriangleIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M12 4.5L21 19.5H3L12 4.5z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M12 10v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="12" cy="16.7" r="0.9" fill="currentColor" />
+    </svg>
+  )
+}
+
 export function EyeIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
