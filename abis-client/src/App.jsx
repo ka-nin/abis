@@ -8,10 +8,10 @@ import Step2 from './pages/user/Step2'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import DM_Import from './pages/admin/DM_Import'
 import VerifiedVoters from './pages/admin/VerifiedVoters'
+import Adj_All from './pages/admin/Adj_All'
 import AdminLayout from './layouts/AdminLayout'
 
 const ADMIN_PAGE_LABELS = {
-  adjudication: 'Adjudication',
   reports: 'Reports & Statistics',
   database: 'Database & Backup',
   system: 'System Management',
@@ -47,6 +47,10 @@ function App() {
 
     if (adminPage === 'identification') {
       return <VerifiedVoters onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'adjudication') {
+      return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
     if (adminPage !== 'dashboard') {
