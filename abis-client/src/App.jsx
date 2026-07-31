@@ -6,12 +6,54 @@ import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
 import Step2 from './pages/user/Step2'
 import AdminDashboard from './pages/admin/AdminDashboard'
+import DM_Import from './pages/admin/DM_Import'
+import VerifiedVoters from './pages/admin/VerifiedVoters'
+import AdminLayout from './layouts/AdminLayout'
+
+const ADMIN_PAGE_LABELS = {
+  adjudication: 'Adjudication',
+  reports: 'Reports & Statistics',
+  database: 'Database & Backup',
+  system: 'System Management',
+}
+
+function AdminPlaceholderPage({ pageKey, onNavigate, onLogout }) {
+  const label = ADMIN_PAGE_LABELS[pageKey] || pageKey
+  return (
+    <AdminLayout
+      active={pageKey}
+      onNavigate={onNavigate}
+      onLogout={onLogout}
+      title={label}
+      subtitle="This section is under construction."
+    >
+      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-center">
+        <p className="text-sm font-medium text-slate-500">{label} view is coming soon.</p>
+      </div>
+    </AdminLayout>
+  )
+}
 
 function App() {
   const [step, setStep] = useState('role')
+  const [adminPage, setAdminPage] = useState('dashboard')
 
   if (step === 'admin') {
-    return <AdminDashboard onLogout={() => setStep('role')} />
+    const handleAdminLogout = () => setStep('role')
+
+    if (adminPage === 'data-migration') {
+      return <DM_Import onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'identification') {
+      return <VerifiedVoters onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage !== 'dashboard') {
+      return <AdminPlaceholderPage pageKey={adminPage} onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
   }
 
   if (step === 'step2') {

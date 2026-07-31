@@ -3,6 +3,9 @@ import AdminLayout from '../../layouts/AdminLayout'
 import SystemStatus from './SystemStatus'
 import Notifications from './Notifications'
 import DataVisualization from './DataVisualization'
+import DataStatistics from './DataStatistics'
+import Queueing from './Queueing'
+import CustomizeDashboard from './CustomizeDashboard'
 import {
   RefreshIcon,
   PlusIcon,
@@ -434,9 +437,18 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       {activeTab === 'System Status' && <SystemStatus />}
       {activeTab === 'Alerts & Notifications' && <Notifications />}
       {activeTab === 'Data Visualization' && <DataVisualization />}
-      {!['Overview', 'System Status', 'Alerts & Notifications', 'Data Visualization'].includes(activeTab) && (
-        <PlaceholderTab name={activeTab} />
-      )}
+      {activeTab === 'Data Statistics' && <DataStatistics />}
+      {activeTab === 'Queueing' && <Queueing />}
+      {activeTab === 'Customize Dashboard' && <CustomizeDashboard />}
+      {![
+        'Overview',
+        'System Status',
+        'Alerts & Notifications',
+        'Data Visualization',
+        'Data Statistics',
+        'Queueing',
+        'Customize Dashboard',
+      ].includes(activeTab) && <PlaceholderTab name={activeTab} />}
     </AdminLayout>
   )
 }
