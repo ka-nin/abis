@@ -1,53 +1,47 @@
 import { useMemo, useRef, useState } from 'react'
-import AdminLayout from '../../layouts/AdminLayout'
-import { DownloadIcon, RefreshIcon, UsersIcon, TrendUpIcon, XCircleIcon, StarIcon } from '../../components/icons'
-import RS_BioReport from './RS_BioReport'
-import RS_AdjAnalytics from './RS_AdjAnalytics'
-import RS_MReport from './RS_MReport'
+import { DownloadIcon, ArchiveIcon, InfoCircleIcon, CheckCircleIcon } from '../../components/icons'
 
-const TABS = ['Voter Reports', 'Biometric Reports', 'Adjudication Analytics', 'Migration Reports']
-
-const VOTER_STATS = [
+const MIGRATION_STATS = [
   {
-    key: 'totalRegistered',
-    label: 'Total Registered',
-    value: '65.2M',
-    icon: UsersIcon,
+    key: 'recordsImported',
+    label: 'Records Imported',
+    value: '8.4M',
+    icon: DownloadIcon,
     iconBg: 'bg-blue-50',
     iconColor: 'text-blue-600',
   },
   {
-    key: 'newThisMonth',
-    label: 'New This Month',
-    value: '1,203,000',
-    icon: TrendUpIcon,
+    key: 'lastBatch',
+    label: 'Last Batch',
+    value: '85,240',
+    icon: ArchiveIcon,
     iconBg: 'bg-emerald-50',
     iconColor: 'text-emerald-600',
   },
   {
-    key: 'deactivated',
-    label: 'Deactivated',
-    value: '2.1M',
-    icon: XCircleIcon,
-    iconBg: 'bg-red-50',
-    iconColor: 'text-red-500',
-  },
-  {
-    key: 'coverageRate',
-    label: 'Coverage Rate',
-    value: '94.8%',
-    icon: StarIcon,
+    key: 'errorRate',
+    label: 'Error Rate',
+    value: '0.8%',
+    icon: InfoCircleIcon,
     iconBg: 'bg-amber-50',
     iconColor: 'text-amber-600',
   },
+  {
+    key: 'dataQuality',
+    label: 'Data Quality',
+    value: '98.2%',
+    icon: CheckCircleIcon,
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+  },
 ]
 
-const MONTHLY_REGISTRATION = [
-  { label: 'Jan', value: 0.95 },
-  { label: 'Feb', value: 0.98 },
+const MONTHLY_IMPORT_VOLUME = [
+  { label: 'Jan', value: 0.78 },
+  { label: 'Feb', value: 0.92 },
   { label: 'Mar', value: 1.06 },
-  { label: 'Apr', value: 0.92 },
-  { label: 'May', value: 1.16 },
+  { label: 'Apr', value: 0.9 },
+  { label: 'May', value: 1.08 },
   { label: 'Jun', value: 1.32 },
   { label: 'Jul', value: 1.28 },
 ]
@@ -94,14 +88,14 @@ const PAD_B = 26
 const PLOT_W = CHART_W - PAD_L - PAD_R
 const PLOT_H = CHART_H - PAD_T - PAD_B
 
-function MonthlyRegistrationChart() {
+function MonthlyImportVolumeChart() {
   const svgRef = useRef(null)
   const [hoverIndex, setHoverIndex] = useState(null)
 
   const points = useMemo(
     () =>
-      MONTHLY_REGISTRATION.map((d, i) => ({
-        x: PAD_L + (i / (MONTHLY_REGISTRATION.length - 1)) * PLOT_W,
+      MONTHLY_IMPORT_VOLUME.map((d, i) => ({
+        x: PAD_L + (i / (MONTHLY_IMPORT_VOLUME.length - 1)) * PLOT_W,
         y: PAD_T + PLOT_H - (d.value / CHART_MAX) * PLOT_H,
         value: d.value,
         label: d.label,
@@ -134,7 +128,7 @@ function MonthlyRegistrationChart() {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-5">
-      <h2 className="text-sm font-semibold text-slate-900">Monthly Voter Registration (2026)</h2>
+      <h2 className="text-sm font-semibold text-slate-900">Monthly Import Volume (2026)</h2>
 
       <div className="relative mt-4">
         <svg
@@ -145,9 +139,9 @@ function MonthlyRegistrationChart() {
           onMouseLeave={() => setHoverIndex(null)}
         >
           <defs>
-            <linearGradient id="voterRegFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2a78d6" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#2a78d6" stopOpacity="0" />
+            <linearGradient id="importVolFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10b981" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
             </linearGradient>
           </defs>
 
@@ -169,8 +163,8 @@ function MonthlyRegistrationChart() {
             </text>
           ))}
 
-          <path d={areaPath} fill="url(#voterRegFill)" stroke="none" />
-          <path d={linePath} fill="none" stroke="#2a78d6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={areaPath} fill="url(#importVolFill)" stroke="none" />
+          <path d={linePath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
           {hover && (
             <line x1={hover.x} x2={hover.x} y1={PAD_T} y2={PAD_T + PLOT_H} stroke="#c3c2b7" strokeWidth="1" strokeDasharray="3 3" />
@@ -182,7 +176,7 @@ function MonthlyRegistrationChart() {
               cx={p.x}
               cy={p.y}
               r={hoverIndex === i ? 5 : 0}
-              fill="#2a78d6"
+              fill="#10b981"
               stroke="#ffffff"
               strokeWidth="2"
               className={hoverIndex === i ? 'opacity-100' : 'opacity-0'}
@@ -207,70 +201,16 @@ function MonthlyRegistrationChart() {
   )
 }
 
-function VoterReportsTab() {
+export default function RS_MReport() {
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {VOTER_STATS.map(({ key, ...card }) => (
+        {MIGRATION_STATS.map(({ key, ...card }) => (
           <StatCard key={key} {...card} />
         ))}
       </div>
 
-      <MonthlyRegistrationChart />
+      <MonthlyImportVolumeChart />
     </div>
-  )
-}
-
-export default function RS_VReport({ onNavigate, onLogout }) {
-  const [activeTab, setActiveTab] = useState('Voter Reports')
-
-  return (
-    <AdminLayout
-      active="reports"
-      onNavigate={onNavigate}
-      onLogout={onLogout}
-      title="Reports & Statistics"
-      subtitle="Detailed analytics and downloadable reports"
-      headerActions={
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-          >
-            <DownloadIcon className="h-4 w-4" />
-            Export All
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-          >
-            <RefreshIcon className="h-4 w-4" />
-            Refresh
-          </button>
-        </div>
-      }
-    >
-      <div className="mb-5 flex gap-1 overflow-x-auto border-b border-slate-200">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(tab)}
-            className={`flex-shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'Voter Reports' && <VoterReportsTab />}
-      {activeTab === 'Biometric Reports' && <RS_BioReport />}
-      {activeTab === 'Adjudication Analytics' && <RS_AdjAnalytics />}
-      {activeTab === 'Migration Reports' && <RS_MReport />}
-    </AdminLayout>
   )
 }

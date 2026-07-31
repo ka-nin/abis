@@ -13,29 +13,8 @@ import DM_Import from './pages/admin/DM_Import'
 import VerifiedVoters from './pages/admin/VerifiedVoters'
 import Adj_All from './pages/admin/Adj_All'
 import RS_VReport from './pages/admin/RS_VReport'
-import AdminLayout from './layouts/AdminLayout'
-
-const ADMIN_PAGE_LABELS = {
-  database: 'Database & Backup',
-  system: 'System Management',
-}
-
-function AdminPlaceholderPage({ pageKey, onNavigate, onLogout }) {
-  const label = ADMIN_PAGE_LABELS[pageKey] || pageKey
-  return (
-    <AdminLayout
-      active={pageKey}
-      onNavigate={onNavigate}
-      onLogout={onLogout}
-      title={label}
-      subtitle="This section is under construction."
-    >
-      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-center">
-        <p className="text-sm font-medium text-slate-500">{label} view is coming soon.</p>
-      </div>
-    </AdminLayout>
-  )
-}
+import DB_SysFiles from './pages/admin/DB_SysFiles'
+import SM_Settings from './pages/admin/SM_Settings'
 
 function App() {
   const [step, setStep] = useState('role')
@@ -60,8 +39,12 @@ function App() {
       return <RS_VReport onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
-    if (adminPage !== 'dashboard') {
-      return <AdminPlaceholderPage pageKey={adminPage} onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    if (adminPage === 'database') {
+      return <DB_SysFiles onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'system') {
+      return <SM_Settings onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
     return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
