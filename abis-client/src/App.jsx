@@ -5,6 +5,7 @@ import Intro from './pages/user/Intro'
 import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
 import Step2 from './pages/user/Step2'
+import Step3 from './pages/user/Step3'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 
@@ -41,12 +42,16 @@ function App() {
     return <AdminPlaceholder onBack={() => setStep('role')} />
   }
 
+  if (step === 'step3') {
+    return <Step3 onBack={() => setStep('step2')} onVerify={() => setStep('landing')} />
+  }
+
   if (step === 'step2') {
     return (
       <Step2
         onBack={() => setStep('step1')}
-        onVerify={() => setStep('landing')}
-        onVerifyEmail={() => setStep('landing')}
+        onVerify={() => setStep('step3')}
+        onVerifyEmail={() => setStep('step3')}
       />
     )
   }
