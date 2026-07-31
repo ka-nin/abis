@@ -8,38 +8,59 @@ import Step2 from './pages/user/Step2'
 import Step3 from './pages/user/Step3'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import DM_Import from './pages/admin/DM_Import'
+import VerifiedVoters from './pages/admin/VerifiedVoters'
+import Adj_All from './pages/admin/Adj_All'
+import AdminLayout from './layouts/AdminLayout'
 
-function AdminPlaceholder({ onBack }) {
+const ADMIN_PAGE_LABELS = {
+  reports: 'Reports & Statistics',
+  database: 'Database & Backup',
+  system: 'System Management',
+}
+
+function AdminPlaceholderPage({ pageKey, onNavigate, onLogout }) {
+  const label = ADMIN_PAGE_LABELS[pageKey] || pageKey
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-blue-50/40">
-      <header className="border-b border-slate-200/80">
-        <div className="mx-auto flex max-w-7xl items-center px-6 py-4">
-          <BrandLockup />
-        </div>
-      </header>
-      <main className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-2xl font-bold text-slate-900">Admin Portal</h1>
-        <p className="mt-2 text-sm text-slate-500">
-          The admin login screen hasn't been built yet.
-        </p>
-        <button
-          type="button"
-          onClick={onBack}
-          className="mt-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
-        >
-          <ArrowLeftIcon className="h-4 w-4" />
-          Back
-        </button>
-      </main>
-    </div>
+    <AdminLayout
+      active={pageKey}
+      onNavigate={onNavigate}
+      onLogout={onLogout}
+      title={label}
+      subtitle="This section is under construction."
+    >
+      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-center">
+        <p className="text-sm font-medium text-slate-500">{label} view is coming soon.</p>
+      </div>
+    </AdminLayout>
   )
 }
 
 function App() {
   const [step, setStep] = useState('role')
+  const [adminPage, setAdminPage] = useState('dashboard')
 
   if (step === 'admin') {
-    return <AdminPlaceholder onBack={() => setStep('role')} />
+    const handleAdminLogout = () => setStep('role')
+
+    if (adminPage === 'data-migration') {
+      return <DM_Import onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'identification') {
+      return <VerifiedVoters onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'adjudication') {
+      return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage !== 'dashboard') {
+      return <AdminPlaceholderPage pageKey={adminPage} onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
   }
 
   if (step === 'step3') {
