@@ -5,6 +5,9 @@ import { CaseList } from './adjudicationShared'
 import Adj_Errors from './Adj_Errors'
 import Adj_BioMM from './Adj_BioMM'
 import Adj_InvID from './Adj_InvID'
+import Adj_GovMM from './Adj_GovMM'
+import Adj_Hits from './Adj_Hits'
+import Adj_DupeR from './Adj_DupeR'
 
 const TABS = ['All', 'Errors', 'Biometric Mismatch', 'Invalid ID', 'Gov. Record Mismatch', 'Hits', 'Duplicate Records']
 
@@ -74,14 +77,6 @@ const CASES = [
   },
 ]
 
-function PlaceholderTab({ name }) {
-  return (
-    <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-center">
-      <p className="text-sm font-medium text-slate-500">{name} view is coming soon.</p>
-    </div>
-  )
-}
-
 export default function Adj_All({ onNavigate, onLogout }) {
   const [activeTab, setActiveTab] = useState('All')
   const openCount = CASES.filter((c) => c.status === 'open').length
@@ -130,7 +125,9 @@ export default function Adj_All({ onNavigate, onLogout }) {
       {activeTab === 'Errors' && <Adj_Errors />}
       {activeTab === 'Biometric Mismatch' && <Adj_BioMM />}
       {activeTab === 'Invalid ID' && <Adj_InvID />}
-      {!['All', 'Errors', 'Biometric Mismatch', 'Invalid ID'].includes(activeTab) && <PlaceholderTab name={activeTab} />}
+      {activeTab === 'Gov. Record Mismatch' && <Adj_GovMM />}
+      {activeTab === 'Hits' && <Adj_Hits />}
+      {activeTab === 'Duplicate Records' && <Adj_DupeR />}
     </AdminLayout>
   )
 }
