@@ -9,10 +9,10 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import DM_Import from './pages/admin/DM_Import'
 import VerifiedVoters from './pages/admin/VerifiedVoters'
 import Adj_All from './pages/admin/Adj_All'
+import RS_VReport from './pages/admin/RS_VReport'
 import AdminLayout from './layouts/AdminLayout'
 
 const ADMIN_PAGE_LABELS = {
-  reports: 'Reports & Statistics',
   database: 'Database & Backup',
   system: 'System Management',
 }
@@ -51,6 +51,10 @@ function App() {
 
     if (adminPage === 'adjudication') {
       return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'reports') {
+      return <RS_VReport onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
     if (adminPage !== 'dashboard') {

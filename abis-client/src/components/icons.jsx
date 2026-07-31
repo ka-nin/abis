@@ -544,6 +544,19 @@ export function AlertTriangleIcon({ className = '' }) {
   )
 }
 
+export function StarIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8L12 3.5z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function EyeIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
