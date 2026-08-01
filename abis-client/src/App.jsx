@@ -8,6 +8,7 @@ import Step2 from './pages/user/Step2'
 import Step3 from './pages/user/Step3'
 import Step4 from './pages/user/Step4'
 import Step5 from './pages/user/Step5'
+import Step6 from './pages/user/Step6'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -52,11 +53,15 @@ function App() {
     return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
   }
 
+  if (step === 'step6') {
+    return <Step6 onBack={() => setStep('step5')} onContinue={() => setStep('landing')} />
+  }
+
   if (step === 'step5') {
     return (
       <Step5
         onBack={() => setStep('step4')}
-        onSelectFace={() => setStep('landing')}
+        onSelectFace={() => setStep('step6')}
         onSelectFingerprint={() => setStep('landing')}
       />
     )
