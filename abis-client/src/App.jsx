@@ -10,6 +10,11 @@ import Step4 from './pages/user/Step4'
 import Step5 from './pages/user/Step5'
 import Step6 from './pages/user/Step6'
 import Step7 from './pages/user/Step7'
+import Step8 from './pages/user/Step8'
+import Step9 from './pages/user/Step9'
+import Step10 from './pages/user/Step10'
+import Step11 from './pages/user/Step11'
+import Step12 from './pages/user/Step12'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -66,12 +71,32 @@ function App() {
     )
   }
 
+  if (step === 'step12') {
+    return <Step12 onReturnHome={() => setStep('landing')} />
+  }
+
+  if (step === 'step11') {
+    return <Step11 onBack={() => setStep('step10')} onContinue={() => setStep('step12')} />
+  }
+
+  if (step === 'step10') {
+    return <Step10 onBack={() => setStep('step9')} onContinue={() => setStep('step11')} />
+  }
+
+  if (step === 'step9') {
+    return <Step9 onBack={() => setStep('step8')} onContinue={() => setStep('step10')} />
+  }
+
+  if (step === 'step8') {
+    return <Step8 onBack={() => setStep('step7')} onContinue={() => setStep('step9')} />
+  }
+
   if (step === 'step7') {
     return (
       <Step7
         onBack={() => setStep('step6')}
-        onContinue={() => setStep('landing')}
-        onSkip={() => setStep('landing')}
+        onContinue={() => setStep('step8')}
+        onSkip={() => setStep('step8')}
       />
     )
   }

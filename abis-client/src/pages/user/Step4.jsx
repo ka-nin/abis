@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeftIcon, ArrowRightIcon, RefreshIcon, CheckCircleIcon } from '../../components/icons'
+import { ArrowLeftIcon, ArrowRightIcon, RefreshIcon, CheckCircleIcon, FileTextIcon } from '../../components/icons'
 import BrandLockup from '../../components/BrandLockup'
 import RegistrationStepper from '../../components/RegistrationStepper'
 
@@ -79,6 +79,11 @@ export default function Step4({ onBack, onContinue }) {
           ) : (
             <RefreshIcon className="h-7 w-7 animate-spin" />
           )}
+        </span>
+
+        <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700">
+          <FileTextIcon className="h-4 w-4" />
+          Step 4 of 12
         </span>
 
         <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-slate-900">

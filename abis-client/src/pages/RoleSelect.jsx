@@ -1,11 +1,11 @@
 import {
-  FingerprintMark,
   ShieldCheckIcon,
   ArrowRightIcon,
 } from '../components/icons'
 import BrandLockup from '../components/BrandLockup'
+import groupIcon from '../assets/Group.png'
 
-function RoleCard({ icon, iconBg, iconColor, title, description, actionLabel, onClick }) {
+function RoleCard({ icon, image, iconBg, iconColor, title, description, actionLabel, onClick }) {
   const Icon = icon
   return (
     <button
@@ -14,7 +14,11 @@ function RoleCard({ icon, iconBg, iconColor, title, description, actionLabel, on
       className="group flex flex-col items-start gap-4 rounded-2xl border border-slate-200 bg-white p-8 text-left transition-all hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-900/10"
     >
       <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${iconBg}`}>
-        <Icon className={`h-7 w-7 ${iconColor}`} />
+        {image ? (
+          <img src={image} alt="" className="h-8 w-8 object-contain" />
+        ) : (
+          <Icon className={`h-7 w-7 ${iconColor}`} />
+        )}
       </span>
       <div>
         <h2 className="text-xl font-bold text-slate-900">{title}</h2>
@@ -52,9 +56,8 @@ export default function RoleSelect({ onSelectUser, onSelectAdmin }) {
 
         <div className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
           <RoleCard
-            icon={FingerprintMark}
+            image={groupIcon}
             iconBg="bg-blue-50"
-            iconColor="text-blue-600"
             title="Voter"
             description="Register to vote or check the status of your existing voter registration."
             actionLabel="Continue as Voter"

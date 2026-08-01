@@ -132,6 +132,13 @@ export default function Step7({ onBack, onContinue, onSkip }) {
     setScanProgress(0)
   }
 
+  const handleRetake = () => {
+    setLeftDone(false)
+    setRightDone(false)
+    setStage('capture')
+    setScanProgress(0)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
@@ -269,12 +276,29 @@ export default function Step7({ onBack, onContinue, onSkip }) {
             >
               Scan Fingerprint Form
             </button>
+          ) : scanDone ? (
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleRetake}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                <RefreshIcon className="h-4 w-4" />
+                Retake
+              </button>
+              <button
+                type="button"
+                onClick={onContinue}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-emerald-900/20 transition-colors hover:bg-emerald-700"
+              >
+                Submit
+              </button>
+            </div>
           ) : (
             <button
               type="button"
-              onClick={onContinue}
-              disabled={!scanDone}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-emerald-900/20 transition-colors enabled:hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
+              disabled
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-200 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-slate-400 cursor-not-allowed"
             >
               Submit
             </button>
