@@ -59,6 +59,7 @@ export default function AdminLayout({
   customizeItems = [],
   onToggleCustomizeItem,
   onResetCustomize,
+  onBellClick,
   children,
 }) {
   const [search, setSearch] = useState('')
@@ -157,6 +158,7 @@ export default function AdminLayout({
 
             <button
               type="button"
+              onClick={onBellClick}
               className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100"
               aria-label="Notifications"
             >

@@ -22,35 +22,47 @@ import SM_Settings from './pages/admin/SM_Settings'
 function App() {
   const [step, setStep] = useState('role')
   const [adminPage, setAdminPage] = useState('dashboard')
+  const [dashboardTab, setDashboardTab] = useState('Overview')
 
   if (step === 'admin') {
     const handleAdminLogout = () => setStep('role')
+    const goToNotifications = () => {
+      setDashboardTab('Alerts & Notifications')
+      setAdminPage('dashboard')
+    }
 
     if (adminPage === 'data-migration') {
-      return <DM_Import onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <DM_Import onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
     if (adminPage === 'identification') {
-      return <VerifiedVoters onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <VerifiedVoters onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
     if (adminPage === 'adjudication') {
-      return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
     if (adminPage === 'reports') {
-      return <RS_VReport onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <RS_VReport onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
     if (adminPage === 'database') {
-      return <DB_SysFiles onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <DB_SysFiles onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
     if (adminPage === 'system') {
-      return <SM_Settings onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+      return <SM_Settings onNavigate={setAdminPage} onLogout={handleAdminLogout} onBellClick={goToNotifications} />
     }
 
-    return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    return (
+      <AdminDashboard
+        onNavigate={setAdminPage}
+        onLogout={handleAdminLogout}
+        onBellClick={goToNotifications}
+        initialTab={dashboardTab}
+      />
+    )
   }
 
   if (step === 'step6') {

@@ -51,7 +51,7 @@ function SystemFilesTab() {
   )
 }
 
-export default function DB_SysFiles({ onNavigate, onLogout }) {
+export default function DB_SysFiles({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('System Files')
 
   return (
@@ -59,6 +59,7 @@ export default function DB_SysFiles({ onNavigate, onLogout }) {
       active="database"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="Database & Backup"
       subtitle="System files, database access, and backup management"
       headerActions={

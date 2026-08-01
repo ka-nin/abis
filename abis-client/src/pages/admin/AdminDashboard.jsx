@@ -385,8 +385,8 @@ function PlaceholderTab({ name }) {
   )
 }
 
-export default function AdminDashboard({ onNavigate, onLogout }) {
-  const [activeTab, setActiveTab] = useState('Overview')
+export default function AdminDashboard({ onNavigate, onLogout, initialTab, onBellClick }) {
+  const [activeTab, setActiveTab] = useState(initialTab && TABS.includes(initialTab) ? initialTab : 'Overview')
   const [hiddenTabs, setHiddenTabs] = useState(() => new Set())
 
   const visibleTabs = TABS.filter((tab) => !hiddenTabs.has(tab))
@@ -396,6 +396,18 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       setActiveTab(visibleTabs[0] ?? 'Overview')
     }
   }, [visibleTabs, activeTab])
+
+  // Jumping here via the bell should always land on the tab, even if it was filtered out.
+  useEffect(() => {
+    if (!initialTab || !TABS.includes(initialTab)) return
+    setHiddenTabs((prev) => {
+      if (!prev.has(initialTab)) return prev
+      const next = new Set(prev)
+      next.delete(initialTab)
+      return next
+    })
+    setActiveTab(initialTab)
+  }, [initialTab])
 
   const toggleTabVisibility = (tab) => {
     setHiddenTabs((prev) => {
@@ -424,6 +436,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       customizeItems={customizeItems}
       onToggleCustomizeItem={toggleTabVisibility}
       onResetCustomize={resetTabVisibility}
+      onBellClick={onBellClick}
       title="Dashboard"
       subtitle="National Election Commission — ABIS Overview"
       headerActions={
