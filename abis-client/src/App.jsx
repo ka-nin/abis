@@ -5,34 +5,18 @@ import Intro from './pages/user/Intro'
 import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
 import Step2 from './pages/user/Step2'
+import Step3 from './pages/user/Step3'
+import Step4 from './pages/user/Step4'
+import Step5 from './pages/user/Step5'
+import { ArrowLeftIcon } from './components/icons'
+import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import DM_Import from './pages/admin/DM_Import'
 import VerifiedVoters from './pages/admin/VerifiedVoters'
 import Adj_All from './pages/admin/Adj_All'
-import AdminLayout from './layouts/AdminLayout'
-
-const ADMIN_PAGE_LABELS = {
-  reports: 'Reports & Statistics',
-  database: 'Database & Backup',
-  system: 'System Management',
-}
-
-function AdminPlaceholderPage({ pageKey, onNavigate, onLogout }) {
-  const label = ADMIN_PAGE_LABELS[pageKey] || pageKey
-  return (
-    <AdminLayout
-      active={pageKey}
-      onNavigate={onNavigate}
-      onLogout={onLogout}
-      title={label}
-      subtitle="This section is under construction."
-    >
-      <div className="flex min-h-[240px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white text-center">
-        <p className="text-sm font-medium text-slate-500">{label} view is coming soon.</p>
-      </div>
-    </AdminLayout>
-  )
-}
+import RS_VReport from './pages/admin/RS_VReport'
+import DB_SysFiles from './pages/admin/DB_SysFiles'
+import SM_Settings from './pages/admin/SM_Settings'
 
 function App() {
   const [step, setStep] = useState('role')
@@ -53,19 +37,45 @@ function App() {
       return <Adj_All onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
-    if (adminPage !== 'dashboard') {
-      return <AdminPlaceholderPage pageKey={adminPage} onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    if (adminPage === 'reports') {
+      return <RS_VReport onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'database') {
+      return <DB_SysFiles onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+    }
+
+    if (adminPage === 'system') {
+      return <SM_Settings onNavigate={setAdminPage} onLogout={handleAdminLogout} />
     }
 
     return <AdminDashboard onNavigate={setAdminPage} onLogout={handleAdminLogout} />
+  }
+
+  if (step === 'step5') {
+    return (
+      <Step5
+        onBack={() => setStep('step4')}
+        onSelectFace={() => setStep('landing')}
+        onSelectFingerprint={() => setStep('landing')}
+      />
+    )
+  }
+
+  if (step === 'step4') {
+    return <Step4 onBack={() => setStep('step3')} onContinue={() => setStep('step5')} />
+  }
+
+  if (step === 'step3') {
+    return <Step3 onBack={() => setStep('step2')} onContinue={() => setStep('step4')} />
   }
 
   if (step === 'step2') {
     return (
       <Step2
         onBack={() => setStep('step1')}
-        onVerify={() => setStep('landing')}
-        onVerifyEmail={() => setStep('landing')}
+        onVerify={() => setStep('step3')}
+        onVerifyEmail={() => setStep('step3')}
       />
     )
   }

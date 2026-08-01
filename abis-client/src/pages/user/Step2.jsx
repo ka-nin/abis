@@ -90,6 +90,11 @@ export default function Step2({ onBack, onVerify, onVerifyEmail }) {
             <PhoneIcon className="h-7 w-7" />
           </span>
 
+          <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-sm font-medium text-blue-700">
+            <PhoneIcon className="h-4 w-4" />
+            Step 2 of 12
+          </span>
+
           <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-slate-900">
             OTP Verification
           </h1>

@@ -520,6 +520,15 @@ export function DownloadIcon({ className = '' }) {
   )
 }
 
+export function UploadIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 8l5-5 5 5M12 3v12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export function FilterIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
@@ -540,6 +549,29 @@ export function AlertTriangleIcon({ className = '' }) {
       />
       <path d="M12 10v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       <circle cx="12" cy="16.7" r="0.9" fill="currentColor" />
+    </svg>
+  )
+}
+
+export function CalendarIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="4" y="5.5" width="16" height="15" rx="2" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M4 9.5h16" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 3.5v4M16 3.5v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function StarIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M12 3.5l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8L12 3.5z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
