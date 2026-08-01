@@ -416,13 +416,13 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
         </div>
       }
     >
-      <div className="mb-5 flex gap-1 overflow-x-auto border-b border-slate-200">
+      <div className="mb-5 flex gap-8 overflow-x-auto border-b border-slate-200">
         {TABS.map((tab) => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
-            className={`flex-shrink-0 border-b-2 px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex-shrink-0 border-b-2 px-1 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-slate-500 hover:text-slate-800'

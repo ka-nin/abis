@@ -32,7 +32,7 @@ function NavLink({ item, active, onSelect }) {
     <button
       type="button"
       onClick={() => onSelect?.(item.key)}
-      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+      className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium transition-colors ${
         isActive
           ? 'bg-blue-50 text-blue-700'
           : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
@@ -64,7 +64,7 @@ export default function AdminLayout({
           <BrandLockup subtitle="National Election Commission" />
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-4">
           {NAV_ITEMS.map((item) => (
             <NavLink key={item.key} item={item} active={active} onSelect={onNavigate} />
           ))}
