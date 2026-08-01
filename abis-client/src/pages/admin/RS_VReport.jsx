@@ -221,7 +221,7 @@ function VoterReportsTab() {
   )
 }
 
-export default function RS_VReport({ onNavigate, onLogout }) {
+export default function RS_VReport({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('Voter Reports')
 
   return (
@@ -229,6 +229,7 @@ export default function RS_VReport({ onNavigate, onLogout }) {
       active="reports"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="Reports & Statistics"
       subtitle="Detailed analytics and downloadable reports"
       headerActions={

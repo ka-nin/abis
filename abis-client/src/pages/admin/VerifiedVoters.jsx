@@ -84,7 +84,7 @@ function VerifiedVotersTab() {
   )
 }
 
-export default function VerifiedVoters({ onNavigate, onLogout }) {
+export default function VerifiedVoters({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('Verified Voters')
 
   return (
@@ -92,6 +92,7 @@ export default function VerifiedVoters({ onNavigate, onLogout }) {
       active="identification"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="Identification & Verification"
       subtitle="Voter biometric identification and search"
       headerActions={

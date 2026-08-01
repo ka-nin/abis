@@ -130,7 +130,7 @@ function SettingsTab() {
   )
 }
 
-export default function SM_Settings({ onNavigate, onLogout }) {
+export default function SM_Settings({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('Settings')
 
   return (
@@ -138,6 +138,7 @@ export default function SM_Settings({ onNavigate, onLogout }) {
       active="system"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="System Management"
       subtitle="Settings, audit logs, and user administration"
       headerActions={

@@ -124,7 +124,7 @@ function ImportDataTab() {
   )
 }
 
-export default function DM_Import({ onNavigate, onLogout }) {
+export default function DM_Import({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('Import Data')
 
   return (
@@ -132,6 +132,7 @@ export default function DM_Import({ onNavigate, onLogout }) {
       active="data-migration"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="Data Migration"
       subtitle="Import, export, and monitor database operations"
       headerActions={

@@ -77,7 +77,7 @@ const CASES = [
   },
 ]
 
-export default function Adj_All({ onNavigate, onLogout }) {
+export default function Adj_All({ onNavigate, onLogout, onBellClick }) {
   const [activeTab, setActiveTab] = useState('All')
   const openCount = CASES.filter((c) => c.status === 'open').length
 
@@ -86,6 +86,7 @@ export default function Adj_All({ onNavigate, onLogout }) {
       active="adjudication"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      onBellClick={onBellClick}
       title="Adjudication"
       subtitle="Review and resolve flagged registration cases"
       headerActions={
