@@ -9,6 +9,7 @@ import Step3 from './pages/user/Step3'
 import Step4 from './pages/user/Step4'
 import Step5 from './pages/user/Step5'
 import Step6 from './pages/user/Step6'
+import Step7 from './pages/user/Step7'
 import { ArrowLeftIcon } from './components/icons'
 import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -65,8 +66,18 @@ function App() {
     )
   }
 
+  if (step === 'step7') {
+    return (
+      <Step7
+        onBack={() => setStep('step6')}
+        onContinue={() => setStep('landing')}
+        onSkip={() => setStep('landing')}
+      />
+    )
+  }
+
   if (step === 'step6') {
-    return <Step6 onBack={() => setStep('step5')} onContinue={() => setStep('landing')} />
+    return <Step6 onBack={() => setStep('step5')} onContinue={() => setStep('step7')} />
   }
 
   if (step === 'step5') {
