@@ -1,11 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AdminLayout from '../../layouts/AdminLayout'
 import SystemStatus from './SystemStatus'
 import Notifications from './Notifications'
 import DataVisualization from './DataVisualization'
 import DataStatistics from './DataStatistics'
 import Queueing from './Queueing'
-import CustomizeDashboard from './CustomizeDashboard'
 import {
   RefreshIcon,
   PlusIcon,
@@ -25,7 +24,6 @@ const TABS = [
   'Data Visualization',
   'Data Statistics',
   'Queueing',
-  'Customize Dashboard',
 ]
 
 const STAT_CARDS = [
@@ -389,12 +387,43 @@ function PlaceholderTab({ name }) {
 
 export default function AdminDashboard({ onNavigate, onLogout }) {
   const [activeTab, setActiveTab] = useState('Overview')
+  const [hiddenTabs, setHiddenTabs] = useState(() => new Set())
+
+  const visibleTabs = TABS.filter((tab) => !hiddenTabs.has(tab))
+
+  useEffect(() => {
+    if (!visibleTabs.includes(activeTab)) {
+      setActiveTab(visibleTabs[0] ?? 'Overview')
+    }
+  }, [visibleTabs, activeTab])
+
+  const toggleTabVisibility = (tab) => {
+    setHiddenTabs((prev) => {
+      const next = new Set(prev)
+      if (next.has(tab)) {
+        next.delete(tab)
+      } else {
+        // Always keep at least one tab visible.
+        if (TABS.length - next.size <= 1) return prev
+        next.add(tab)
+      }
+      return next
+    })
+  }
+
+  const resetTabVisibility = () => setHiddenTabs(new Set())
+
+  const customizeItems = TABS.map((tab) => ({ key: tab, label: tab, enabled: !hiddenTabs.has(tab) }))
 
   return (
     <AdminLayout
       active="dashboard"
       onNavigate={onNavigate}
       onLogout={onLogout}
+      showCustomize
+      customizeItems={customizeItems}
+      onToggleCustomizeItem={toggleTabVisibility}
+      onResetCustomize={resetTabVisibility}
       title="Dashboard"
       subtitle="National Election Commission — ABIS Overview"
       headerActions={
@@ -417,7 +446,7 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       }
     >
       <div className="mb-5 flex gap-8 overflow-x-auto border-b border-slate-200">
-        {TABS.map((tab) => (
+        {visibleTabs.map((tab) => (
           <button
             key={tab}
             type="button"
@@ -439,7 +468,6 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
       {activeTab === 'Data Visualization' && <DataVisualization />}
       {activeTab === 'Data Statistics' && <DataStatistics />}
       {activeTab === 'Queueing' && <Queueing />}
-      {activeTab === 'Customize Dashboard' && <CustomizeDashboard />}
       {![
         'Overview',
         'System Status',
@@ -447,7 +475,6 @@ export default function AdminDashboard({ onNavigate, onLogout }) {
         'Data Visualization',
         'Data Statistics',
         'Queueing',
-        'Customize Dashboard',
       ].includes(activeTab) && <PlaceholderTab name={activeTab} />}
     </AdminLayout>
   )
