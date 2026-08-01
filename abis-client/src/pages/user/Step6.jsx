@@ -41,22 +41,28 @@ function QualityCheckRow({ label, value }) {
 }
 
 export default function Step6({ onBack, onContinue }) {
+  const [started, setStarted] = useState(false)
   const [progress, setProgress] = useState(0)
   const isCaptured = progress >= 100
-  const isHolding = progress >= 80
+  const isHolding = started && progress >= 80
 
   useEffect(() => {
-    if (progress >= 100) return
+    if (!started || progress >= 100) return
     const timer = setTimeout(() => setProgress((p) => Math.min(p + SCAN_TICK_STEP, 100)), SCAN_TICK_MS)
     return () => clearTimeout(timer)
-  }, [progress])
+  }, [started, progress])
 
   const metrics = QUALITY_CHECKS.map((check) => ({
     ...check,
-    value: Math.round(check.final * (0.3 + 0.7 * (progress / 100))),
+    value: started ? Math.round(check.final * (0.3 + 0.7 * (progress / 100))) : 0,
   }))
 
-  const handleRetake = () => setProgress(0)
+  const handleCapture = () => setStarted(true)
+
+  const handleRetake = () => {
+    setStarted(false)
+    setProgress(0)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
@@ -89,7 +95,7 @@ export default function Step6({ onBack, onContinue }) {
                   isHolding ? 'bg-emerald-50 text-emerald-700' : 'bg-white text-blue-600'
                 }`}
               >
-                {isHolding ? 'Hold still...' : 'Center your face'}
+                {isHolding ? 'Hold still...' : started ? 'Scanning...' : 'Center your face'}
               </span>
 
               <span className="absolute left-6 top-6 h-6 w-6 rounded-tl border-l-2 border-t-2 border-slate-500/70" />
@@ -108,7 +114,7 @@ export default function Step6({ onBack, onContinue }) {
 
             <div className="mt-4 w-full">
               <div className="flex items-center justify-between text-xs text-slate-500">
-                <span>Scanning Face</span>
+                <span>{started ? 'Scanning Face' : 'Ready to Scan'}</span>
                 <span>{progress}%</span>
               </div>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
@@ -119,14 +125,23 @@ export default function Step6({ onBack, onContinue }) {
               </div>
             </div>
 
-            {!isCaptured ? (
+            {!started ? (
+              <button
+                type="button"
+                onClick={handleCapture}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-blue-800"
+              >
+                <CameraIcon className="h-4 w-4" />
+                Capture Photo
+              </button>
+            ) : !isCaptured ? (
               <button
                 type="button"
                 disabled
                 className="mt-4 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl bg-blue-300 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/10"
               >
                 <CameraIcon className="h-4 w-4" />
-                Capture Photo
+                Scanning...
               </button>
             ) : (
               <div className="mt-4 flex w-full gap-3">

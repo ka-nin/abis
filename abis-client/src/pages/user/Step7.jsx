@@ -289,7 +289,7 @@ export default function Step7({ onBack, onContinue, onSkip }) {
               <button
                 type="button"
                 onClick={onContinue}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-emerald-900/20 transition-colors hover:bg-emerald-700"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-blue-800"
               >
                 Submit
               </button>
