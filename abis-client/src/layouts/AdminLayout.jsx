@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import BrandLockup from '../components/BrandLockup'
+import CustomizeDashboard from '../pages/admin/CustomizeDashboard'
 import {
   GridIcon,
   SwapIcon,
@@ -13,6 +14,7 @@ import {
   BellIcon,
   UserIcon,
   DotsHorizontalIcon,
+  SlidersIcon,
 } from '../components/icons'
 
 const NAV_ITEMS = [
@@ -53,9 +55,14 @@ export default function AdminLayout({
   adminName = 'Admin A. Reyes',
   adminRole = 'Super Administrator',
   onLogout,
+  showCustomize = false,
+  customizeItems = [],
+  onToggleCustomizeItem,
+  onResetCustomize,
   children,
 }) {
   const [search, setSearch] = useState('')
+  const [customizeOpen, setCustomizeOpen] = useState(false)
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -113,6 +120,41 @@ export default function AdminLayout({
           </div>
 
           <div className="ml-auto flex items-center gap-3">
+            {showCustomize && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setCustomizeOpen((open) => !open)}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                    customizeOpen ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-100'
+                  }`}
+                  aria-label="Customize dashboard"
+                  aria-expanded={customizeOpen}
+                >
+                  <SlidersIcon className="h-5 w-5" />
+                </button>
+
+                {customizeOpen && (
+                  <>
+                    <button
+                      type="button"
+                      className="fixed inset-0 z-40 cursor-default"
+                      aria-label="Close customize dashboard"
+                      onClick={() => setCustomizeOpen(false)}
+                    />
+                    <div className="absolute right-0 top-full z-50 mt-2 w-96 rounded-2xl border border-slate-200 bg-white shadow-xl">
+                      <CustomizeDashboard
+                        items={customizeItems}
+                        onToggle={onToggleCustomizeItem}
+                        onReset={onResetCustomize}
+                        onClose={() => setCustomizeOpen(false)}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
             <button
               type="button"
               className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100"

@@ -597,3 +597,16 @@ export function ZapIcon({ className = '' }) {
     </svg>
   )
 }
+
+export function SlidersIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <line x1="4" y1="6" x2="20" y2="6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="15" cy="6" r="2" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="4" y1="12" x2="20" y2="12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="9" cy="12" r="2" stroke="currentColor" strokeWidth="1.6" />
+      <line x1="4" y1="18" x2="20" y2="18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="16" cy="18" r="2" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  )
+}
