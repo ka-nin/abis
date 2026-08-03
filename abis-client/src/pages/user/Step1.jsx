@@ -165,6 +165,21 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
   const [transferScope, setTransferScope] = useState('')
   const [formerRecordType, setFormerRecordType] = useState('')
   const [deactivationGround, setDeactivationGround] = useState('')
+  const [citizenshipType, setCitizenshipType] = useState('')
+  const [skCivilStatus, setSkCivilStatus] = useState('')
+  const [isIndigenous, setIsIndigenous] = useState(false)
+  const [isIlliterate, setIsIlliterate] = useState(false)
+  const [isSeniorCitizen, setIsSeniorCitizen] = useState(false)
+  const [isPWD, setIsPWD] = useState(false)
+  const [disabilityType, setDisabilityType] = useState('')
+  const [assistanceNeeded, setAssistanceNeeded] = useState('')
+  const [appWilling, setAppWilling] = useState('')
+  const [skPrecinctStatus, setSkPrecinctStatus] = useState('')
+  const [skConsent, setSkConsent] = useState('')
+  const [overseasApplicationFor, setOverseasApplicationFor] = useState('')
+  const [statusAbroad, setStatusAbroad] = useState([])
+  const [otherOverseasTransaction, setOtherOverseasTransaction] = useState('')
+  const [recaptureReason, setRecaptureReason] = useState('')
 
   const toggleCategory = (category) => {
     setSpecialCategories((prev) =>
@@ -175,6 +190,12 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
   const toggleCorrectField = (field) => {
     setCorrectFields((prev) =>
       prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field],
+    )
+  }
+
+  const toggleStatusAbroad = (status) => {
+    setStatusAbroad((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status],
     )
   }
 
@@ -194,7 +215,7 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
     isOverseas && 'overseas',
     showAddress && 'address',
     'specialCategories',
-    'supportingDocument',
+    !isOverseas && 'supportingDocument',
     isTransfer && 'transferRecord',
   ].filter(Boolean)
   const romanOf = (key) => ROMAN[sections.indexOf(key)] ?? ''
@@ -360,6 +381,116 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
                 </div>
               </div>
 
+              {isSK && (
+                <>
+                  <div>
+                    <SubHeading>Residence / Address</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field label="Province">
+                        <TextInput placeholder="" />
+                      </Field>
+                      <Field label="City/District/Municipality" required>
+                        <TextInput placeholder="Quezon City" />
+                      </Field>
+                      <Field label="Barangay" required>
+                        <TextInput placeholder="Barangay 1" />
+                      </Field>
+                    </div>
+                    <div className="mt-4">
+                      <Field label="House No. / Street / Sitio / Purok">
+                        <TextInput placeholder="123 Sampaguita Street" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div>
+                    <SubHeading>Citizenship Type</SubHeading>
+                    <div className="flex flex-wrap gap-6">
+                      <RadioOption
+                        name="citizenshipType"
+                        checked={citizenshipType === 'birth'}
+                        onChange={() => setCitizenshipType('birth')}
+                        label="By Birth"
+                      />
+                      <RadioOption
+                        name="citizenshipType"
+                        checked={citizenshipType === 'naturalized'}
+                        onChange={() => setCitizenshipType('naturalized')}
+                        label="Naturalized"
+                      />
+                      <RadioOption
+                        name="citizenshipType"
+                        checked={citizenshipType === 'reacquired'}
+                        onChange={() => setCitizenshipType('reacquired')}
+                        label="Reacquired"
+                      />
+                    </div>
+                    {(citizenshipType === 'naturalized' || citizenshipType === 'reacquired') && (
+                      <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <Field label="Date of Naturalization / Reacquisition">
+                          <TextInput type="date" />
+                        </Field>
+                        <Field label="Certificate No. / Order of Approval">
+                          <TextInput placeholder="" />
+                        </Field>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <SubHeading>Civil Status</SubHeading>
+                    <div className="flex flex-wrap gap-6">
+                      <RadioOption
+                        name="skCivilStatus"
+                        checked={skCivilStatus === 'single'}
+                        onChange={() => setSkCivilStatus('single')}
+                        label="Single"
+                      />
+                      <RadioOption
+                        name="skCivilStatus"
+                        checked={skCivilStatus === 'married'}
+                        onChange={() => setSkCivilStatus('married')}
+                        label="Married"
+                      />
+                      <RadioOption
+                        name="skCivilStatus"
+                        checked={skCivilStatus === 'widow'}
+                        onChange={() => setSkCivilStatus('widow')}
+                        label="Widow/er"
+                      />
+                      <RadioOption
+                        name="skCivilStatus"
+                        checked={skCivilStatus === 'separated'}
+                        onChange={() => setSkCivilStatus('separated')}
+                        label="Legally Separated"
+                      />
+                    </div>
+                    {skCivilStatus === 'married' && (
+                      <div className="mt-3">
+                        <Field label="Name of Spouse">
+                          <TextInput placeholder="Full name of spouse" />
+                        </Field>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <SubHeading>Period of Residence</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field label="In the City/Municipality — Years">
+                        <TextInput placeholder="e.g. 5" />
+                      </Field>
+                      <Field label="In the City/Municipality — Months">
+                        <TextInput placeholder="e.g. 6" />
+                      </Field>
+                      <Field label="In the Philippines — Years">
+                        <TextInput placeholder="e.g. 15" />
+                      </Field>
+                    </div>
+                  </div>
+                </>
+              )}
+
               <div>
                 <SubHeading>Contact Information</SubHeading>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -458,6 +589,14 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
                   registration.
                 </p>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field label="Father's Name">
+                    <TextInput placeholder="Full name" />
+                  </Field>
+                  <Field label="Mother's Maiden Name">
+                    <TextInput placeholder="Full maiden name" />
+                  </Field>
+                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Field label="Parent / Guardian Full Name" required>
                     <TextInput placeholder="Full name" />
                   </Field>
@@ -478,36 +617,264 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
           )}
 
           {isOverseas && (
-            <Section roman={romanOf('overseas')} icon={GlobeIcon} title="OVERSEAS VOTER DETAILS">
-              <div className="flex flex-col gap-4 text-left">
-                <p className="text-sm text-slate-500">
-                  Provide your current overseas residence and existing local registration record.
-                </p>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field label="Country of Residence" required>
-                    <TextInput placeholder="e.g. United Arab Emirates" />
-                  </Field>
-                  <Field label="Foreign Post / Embassy or Consulate Jurisdiction" required>
-                    <TextInput placeholder="e.g. Philippine Embassy, Abu Dhabi" />
+            <Section roman={romanOf('overseas')} icon={GlobeIcon} title="APPLICATION FOR CERTIFICATION / REGISTRATION AS OVERSEAS VOTER">
+              <div className="flex flex-col gap-6 text-left">
+                <div>
+                  <SubHeading>Application For</SubHeading>
+                  <div className="flex flex-wrap gap-6">
+                    <RadioOption
+                      name="overseasApplicationFor"
+                      checked={overseasApplicationFor === 'certification'}
+                      onChange={() => setOverseasApplicationFor('certification')}
+                      label="Certification"
+                    />
+                    <RadioOption
+                      name="overseasApplicationFor"
+                      checked={overseasApplicationFor === 'registration'}
+                      onChange={() => setOverseasApplicationFor('registration')}
+                      label="Registration"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <SubHeading>Part I — Personal Information</SubHeading>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Gender (Specify)">
+                      <TextInput placeholder="e.g. Non-binary" />
+                    </Field>
+                    <Field label="Name of Spouse (If Married)">
+                      <TextInput placeholder="Full name of spouse" />
+                    </Field>
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Status Abroad</SubHeading>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <CheckboxOption checked={statusAbroad.includes('OFW')} onChange={() => toggleStatusAbroad('OFW')} label="OFW" />
+                      <CheckboxOption checked={statusAbroad.includes('Immigrant')} onChange={() => toggleStatusAbroad('Immigrant')} label="Immigrant" />
+                      <CheckboxOption checked={statusAbroad.includes('Seafarer')} onChange={() => toggleStatusAbroad('Seafarer')} label="Seafarer" />
+                      <CheckboxOption checked={statusAbroad.includes('Dual Citizen')} onChange={() => toggleStatusAbroad('Dual Citizen')} label="Dual Citizen" />
+                      <CheckboxOption checked={statusAbroad.includes('Others')} onChange={() => toggleStatusAbroad('Others')} label="Others" />
+                    </div>
+                    {statusAbroad.includes('Others') && (
+                      <div className="mt-3">
+                        <Field label="Specify">
+                          <TextInput placeholder="Specify status abroad" />
+                        </Field>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Residence in the Philippines Before Leaving Abroad</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Field label="City/Municipality" required>
+                        <TextInput placeholder="Quezon City" />
+                      </Field>
+                      <Field label="Province">
+                        <TextInput placeholder="" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Residence Abroad</SubHeading>
+                    <Field label="Complete Mailing Address" required>
+                      <TextInput placeholder="Complete address abroad" />
+                    </Field>
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field label="City/State">
+                        <TextInput placeholder="" />
+                      </Field>
+                      <Field label="Postal Code">
+                        <TextInput placeholder="" />
+                      </Field>
+                      <Field label="Country" required>
+                        <TextInput placeholder="e.g. United Arab Emirates" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Post and Country Where Applicant Intends to Vote</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Field label="Post" required>
+                        <TextInput placeholder="e.g. Philippine Embassy, Abu Dhabi" />
+                      </Field>
+                      <Field label="Country" required>
+                        <TextInput placeholder="e.g. United Arab Emirates" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Passport/ID Information</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field label="Passport/ID No." required>
+                        <TextInput placeholder="e.g. P1234567A" />
+                      </Field>
+                      <Field label="Issued On">
+                        <TextInput type="date" />
+                      </Field>
+                      <Field label="Issued At">
+                        <TextInput placeholder="e.g. DFA Manila" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <SubHeading>Contact Details</SubHeading>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Field label="Telephone No.">
+                        <TextInput placeholder="" />
+                      </Field>
+                      <Field label="Mobile No.">
+                        <TextInput placeholder="09XX XXX XXXX" />
+                      </Field>
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field label="Email Address">
+                        <TextInput type="email" placeholder="yourname@email.com" />
+                      </Field>
+                      <Field label="Facebook Account">
+                        <TextInput placeholder="" />
+                      </Field>
+                      <Field label="Other Social Media Accounts">
+                        <TextInput placeholder="" />
+                      </Field>
+                    </div>
+                  </div>
+
+                  <Field label="Existing Local Precinct / Registration No." required className="mt-4">
+                    <TextInput placeholder="e.g. 0045A" />
                   </Field>
                 </div>
-                <Field label="Foreign Address" required>
-                  <TextInput placeholder="Complete address abroad" />
-                </Field>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <Field label="Passport Number" required>
-                    <TextInput placeholder="e.g. P1234567A" />
+
+                <div>
+                  <SubHeading>Part II — Authorized Representative in the Philippines</SubHeading>
+                  <p className="mb-3 text-sm text-slate-500">Optional. Provide details of your authorized representative for this application.</p>
+                  <Field label="Name">
+                    <TextInput placeholder="Full name of representative" />
                   </Field>
-                  <Field label="Passport Expiry Date">
-                    <TextInput type="date" />
-                  </Field>
-                  <Field label="Years Residing Abroad">
-                    <TextInput placeholder="e.g. 3" />
-                  </Field>
+                  <div className="mt-4">
+                    <Field label="Address">
+                      <TextInput placeholder="Complete address in the Philippines" />
+                    </Field>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <Field label="Landline No.">
+                      <TextInput placeholder="" />
+                    </Field>
+                    <Field label="Mobile No.">
+                      <TextInput placeholder="09XX XXX XXXX" />
+                    </Field>
+                    <Field label="E-mail Address">
+                      <TextInput type="email" placeholder="" />
+                    </Field>
+                  </div>
                 </div>
-                <Field label="Existing Local Precinct / Registration No." required>
-                  <TextInput placeholder="e.g. 0045A" />
-                </Field>
+
+                <div>
+                  <SubHeading>Other Overseas Voter Transactions</SubHeading>
+                  <p className="mb-3 text-sm text-slate-500">
+                    Select if this application also covers any of the following (optional).
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <div>
+                      <RadioOption
+                        name="otherOverseasTransaction"
+                        checked={otherOverseasTransaction === 'recapture'}
+                        onChange={() => setOtherOverseasTransaction('recapture')}
+                        label="Application for Recapture of Biometrics"
+                      />
+                      {otherOverseasTransaction === 'recapture' && (
+                        <div className="mt-2 flex flex-wrap gap-6 pl-7">
+                          <RadioOption
+                            name="recaptureReason"
+                            checked={recaptureReason === 'complete'}
+                            onChange={() => setRecaptureReason('complete')}
+                            label="To complete biometrics"
+                          />
+                          <RadioOption
+                            name="recaptureReason"
+                            checked={recaptureReason === 'changeName'}
+                            onChange={() => setRecaptureReason('changeName')}
+                            label="For Application for Change of Name/Correction of Entries"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <RadioOption
+                      name="otherOverseasTransaction"
+                      checked={otherOverseasTransaction === 'reinstatement'}
+                      onChange={() => setOtherOverseasTransaction('reinstatement')}
+                      label="Application for Reinstatement of Name Inadvertently Omitted in the National Registry of Overseas Voters"
+                    />
+
+                    <div>
+                      <RadioOption
+                        name="otherOverseasTransaction"
+                        checked={otherOverseasTransaction === 'changeName'}
+                        onChange={() => setOtherOverseasTransaction('changeName')}
+                        label="Application for Change of Name due to Marriage or Court Order/Correction of Entries"
+                      />
+                      {otherOverseasTransaction === 'changeName' && (
+                        <div className="mt-3 grid grid-cols-1 gap-4 pl-7 sm:grid-cols-2">
+                          <Field label="Present Data/Information">
+                            <TextInput placeholder="" />
+                          </Field>
+                          <Field label="New/Corrected Data/Information">
+                            <TextInput placeholder="" />
+                          </Field>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <RadioOption
+                        name="otherOverseasTransaction"
+                        checked={otherOverseasTransaction === 'withdraw'}
+                        onChange={() => setOtherOverseasTransaction('withdraw')}
+                        label="Request to Withdraw the Application for Registration/Certification Pending Approval"
+                      />
+                      {otherOverseasTransaction === 'withdraw' && (
+                        <div className="mt-3 pl-7">
+                          <Field label="Date and Place of Application as Overseas Voter">
+                            <TextInput placeholder="" />
+                          </Field>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <RadioOption
+                        name="otherOverseasTransaction"
+                        checked={otherOverseasTransaction === 'changeAddress'}
+                        onChange={() => setOtherOverseasTransaction('changeAddress')}
+                        label="Application for Change of Address (within the same Post and Country)"
+                      />
+                      {otherOverseasTransaction === 'changeAddress' && (
+                        <div className="mt-3 grid grid-cols-1 gap-4 pl-7 sm:grid-cols-2">
+                          <Field label="Date and Place of Registration/Certification">
+                            <TextInput placeholder="" />
+                          </Field>
+                          <Field label="New Address">
+                            <TextInput placeholder="" />
+                          </Field>
+                        </div>
+                      )}
+                    </div>
+
+                    <RadioOption
+                      name="otherOverseasTransaction"
+                      checked={otherOverseasTransaction === 'updatePhoto'}
+                      onChange={() => setOtherOverseasTransaction('updatePhoto')}
+                      label="Application for Updating of Photograph and/or Signature"
+                    />
+                  </div>
+                </div>
               </div>
             </Section>
           )}
@@ -563,67 +930,177 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
           )}
 
           <Section roman={romanOf('specialCategories')} icon={ShieldIcon} title="SPECIAL CATEGORIES">
-            <div className="text-left">
-              <p className="mb-4 text-sm text-slate-500">
-                Check all that apply. This information will be used to identify your special
-                needs during elections.
-              </p>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {SPECIAL_CATEGORIES.map((category) => (
-                  <CheckboxOption
-                    key={category}
-                    checked={specialCategories.includes(category)}
-                    onChange={() => toggleCategory(category)}
-                    label={category}
-                  />
-                ))}
+            {isSK ? (
+              <div className="flex flex-col gap-5 text-left">
+                <p className="text-sm text-slate-500">
+                  Check all that apply. This information will be used to identify your special
+                  needs during elections.
+                </p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <CheckboxOption checked={isIndigenous} onChange={() => setIsIndigenous((v) => !v)} label="Indigenous People" />
+                  <CheckboxOption checked={isIlliterate} onChange={() => setIsIlliterate((v) => !v)} label="Illiterate" />
+                  <CheckboxOption checked={isSeniorCitizen} onChange={() => setIsSeniorCitizen((v) => !v)} label="Senior Citizen" />
+                  <CheckboxOption checked={isPWD} onChange={() => setIsPWD((v) => !v)} label="Person with Disability" />
+                </div>
+                {isIndigenous && (
+                  <Field label="Tribe">
+                    <TextInput placeholder="Name of tribe" />
+                  </Field>
+                )}
+
+                {isPWD && (
+                  <div>
+                    <SubHeading>Type of Disability</SubHeading>
+                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                      {[
+                        'Deaf / Hard of Hearing',
+                        'Psychosocial',
+                        'Intellectual',
+                        'Speech and Language',
+                        'Learning',
+                        'Visual',
+                        'Mental',
+                        'Cancer',
+                        'Physical',
+                        'Rare Disease',
+                      ].map((option) => (
+                        <RadioOption
+                          key={option}
+                          name="disabilityType"
+                          checked={disabilityType === option}
+                          onChange={() => setDisabilityType(option)}
+                          label={option}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <SubHeading>Assistance Needed</SubHeading>
+                  <div className="flex flex-wrap gap-6">
+                    <RadioOption
+                      name="assistanceNeeded"
+                      checked={assistanceNeeded === 'assistor'}
+                      onChange={() => setAssistanceNeeded('assistor')}
+                      label="Assistor"
+                    />
+                    <RadioOption
+                      name="assistanceNeeded"
+                      checked={assistanceNeeded === 'communication'}
+                      onChange={() => setAssistanceNeeded('communication')}
+                      label="Communication Assistance"
+                    />
+                    <RadioOption
+                      name="assistanceNeeded"
+                      checked={assistanceNeeded === 'visual'}
+                      onChange={() => setAssistanceNeeded('visual')}
+                      label="Visual Assistance"
+                    />
+                    <RadioOption
+                      name="assistanceNeeded"
+                      checked={assistanceNeeded === 'none'}
+                      onChange={() => setAssistanceNeeded('none')}
+                      label="None"
+                    />
+                  </div>
+                </div>
+
+                {(isSeniorCitizen || isPWD) && (
+                  <div>
+                    <SubHeading>For Senior Citizens and PWDs</SubHeading>
+                    <p className="mb-2 text-sm text-slate-600">
+                      Are you willing to vote in the Accessible Polling Place (APP) located on the ground floor
+                      of the voting center on the day of the Elections?
+                    </p>
+                    <div className="flex gap-6">
+                      <RadioOption
+                        name="appWilling"
+                        checked={appWilling === 'yes'}
+                        onChange={() => setAppWilling('yes')}
+                        label="Yes"
+                      />
+                      <RadioOption
+                        name="appWilling"
+                        checked={appWilling === 'no'}
+                        onChange={() => setAppWilling('no')}
+                        label="No"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {(isIlliterate || isPWD || isSeniorCitizen || isIndigenous) && (
+                  <Field label="Assistor's Name (filled out and attach Certification/Attestation Form)">
+                    <TextInput placeholder="Full name of assistor" />
+                  </Field>
+                )}
               </div>
-            </div>
+            ) : (
+              <div className="text-left">
+                <p className="mb-4 text-sm text-slate-500">
+                  Check all that apply. This information will be used to identify your special
+                  needs during elections.
+                </p>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {SPECIAL_CATEGORIES.map((category) => (
+                    <CheckboxOption
+                      key={category}
+                      checked={specialCategories.includes(category)}
+                      onChange={() => toggleCategory(category)}
+                      label={category}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </Section>
 
-          <Section roman={romanOf('supportingDocument')} icon={IdCardIcon} title="SUPPORTING DOCUMENT PRESENTED">
-            <div className="flex flex-col gap-4 text-left">
-              <p className="text-sm text-slate-500">
-                Provide details of the government-issued ID presented to the Election
-                Officer.
-              </p>
+          {!isOverseas && (
+            <Section roman={romanOf('supportingDocument')} icon={IdCardIcon} title="SUPPORTING DOCUMENT PRESENTED">
+              <div className="flex flex-col gap-4 text-left">
+                <p className="text-sm text-slate-500">
+                  Provide details of the government-issued ID presented to the Election
+                  Officer.
+                </p>
 
-              <Field label="Type of ID / Supporting Document" required>
-                <Select defaultValue="">
-                  <option value="" disabled>
-                    Select ID type
-                  </option>
-                  <option>Philippine Passport</option>
-                  <option>National ID (PhilSys)</option>
-                  <option>Driver's License</option>
-                  <option>UMID</option>
-                  <option>PRC ID</option>
-                  <option>Postal ID</option>
-                  <option>SSS ID</option>
-                  <option>GSIS ID</option>
-                  <option>Senior Citizen ID</option>
-                  <option>PWD ID</option>
-                  <option>Other COMELEC-accepted ID</option>
-                </Select>
-              </Field>
+                <Field label="Type of ID / Supporting Document" required>
+                  <Select defaultValue="">
+                    <option value="" disabled>
+                      Select ID type
+                    </option>
+                    <option>Philippine Passport</option>
+                    <option>National ID (PhilSys)</option>
+                    <option>Driver's License</option>
+                    <option>UMID</option>
+                    <option>PRC ID</option>
+                    <option>Postal ID</option>
+                    <option>SSS ID</option>
+                    <option>GSIS ID</option>
+                    <option>Senior Citizen ID</option>
+                    <option>PWD ID</option>
+                    <option>Other COMELEC-accepted ID</option>
+                  </Select>
+                </Field>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Field label="ID / Document Number" required>
-                  <TextInput placeholder="e.g. A01234567" />
-                </Field>
-                <Field label="Date Issued">
-                  <TextInput type="date" />
-                </Field>
-                <Field label="Expiry Date">
-                  <TextInput type="date" />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <Field label="ID / Document Number" required>
+                    <TextInput placeholder="e.g. A01234567" />
+                  </Field>
+                  <Field label="Date Issued">
+                    <TextInput type="date" />
+                  </Field>
+                  <Field label="Expiry Date">
+                    <TextInput type="date" />
+                  </Field>
+                </div>
+
+                <Field label="Issuing Authority / Office">
+                  <TextInput placeholder="e.g. Department of Foreign Affairs (DFA)" />
                 </Field>
               </div>
-
-              <Field label="Issuing Authority / Office">
-                <TextInput placeholder="e.g. Department of Foreign Affairs (DFA)" />
-              </Field>
-            </div>
-          </Section>
+            </Section>
+          )}
 
           {isTransfer && (
             <Section roman={romanOf('transferRecord')} icon={SwapIcon} title="APPLICATION FOR TRANSFER OF REGISTRATION RECORD">
@@ -729,18 +1206,103 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
           )}
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-            <h2 className="text-left text-sm font-bold tracking-wide text-slate-900">
-              APPLICANT&apos;S DECLARATION
-            </h2>
-            <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
-              I, the undersigned, do hereby affirm that I am a citizen of the Philippines,
-              not otherwise disqualified by law, and I have the qualifications required by
-              the Constitution and by existing laws for the exercise of the right of
-              suffrage. I declare that the entries made above are true, correct and complete
-              to the best of my knowledge. I fully understand that any false statement herein
-              constitutes a ground for election offense under Section 12 of RA 8189 and other
-              applicable laws.
-            </p>
+            {isSK ? (
+              <>
+                <h2 className="text-left text-sm font-bold tracking-wide text-slate-900">
+                  OATH, NOTICE AND CONSENT (KATIPUNAN NG KABATAAN)
+                </h2>
+
+                <label className="mt-4 flex w-fit cursor-pointer items-center gap-3 text-left text-sm font-semibold text-slate-700">
+                  <input type="checkbox" checked readOnly className="h-4 w-4 rounded accent-blue-600" />
+                  Registration
+                </label>
+
+                <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
+                  I do solemnly swear that the above statements regarding my person are true and correct; that I
+                  possess all the qualifications and none of the disqualifications of a voter of Katipunan ng
+                  Kabataan; that I am:
+                </p>
+
+                <div className="mt-3 flex flex-col gap-2.5">
+                  <RadioOption
+                    name="skPrecinctStatus"
+                    checked={skPrecinctStatus === 'none'}
+                    onChange={() => setSkPrecinctStatus('none')}
+                    label="Not registered in any precinct"
+                  />
+                  <RadioOption
+                    name="skPrecinctStatus"
+                    checked={skPrecinctStatus === 'another'}
+                    onChange={() => setSkPrecinctStatus('another')}
+                    label="Registered in a precinct of another City/Municipality/District in the Philippines"
+                  />
+                </div>
+
+                <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
+                  and that I have reviewed the entries encoded in the VRS and I confirm that the same are correct,
+                  accurate and consistent with the information I supplied in this application form. Moreover, by
+                  affixing my signature below, I authorize and give my consent to the Commission on Elections and
+                  the concerned Election Registration Board to collect and process the personal data I supplied
+                  herein for purposes of voter&apos;s registration and elections, and for other purposes and
+                  allowable disclosures under B.P. Blg. 881, R.A. No. 8189, 10173 and 10367, and the relevant
+                  resolutions of the Commission on Elections. Furthermore, I understand that when I reach eighteen
+                  (18) years of age, the personal data I supplied herein will be further processed by the
+                  Commission on Elections, and upon approval by the Election Registration Board, will be included
+                  in and consolidated with the database of voters who are at least eighteen (18) years of age for
+                  subsequent elections and for other lawful purposes and allowable disclosures mentioned above, to
+                  which further processing and its purposes I:
+                </p>
+
+                <div className="mt-3 flex flex-wrap gap-6">
+                  <RadioOption
+                    name="skConsent"
+                    checked={skConsent === 'give'}
+                    onChange={() => setSkConsent('give')}
+                    label="Give my consent"
+                  />
+                  <RadioOption
+                    name="skConsent"
+                    checked={skConsent === 'withhold'}
+                    onChange={() => setSkConsent('withhold')}
+                    label="Do not give my consent"
+                  />
+                </div>
+
+                <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
+                  and that when I reach thirty one (31) years of age, my personal data in the Katipunan ng
+                  Kabataan database will be deleted accordingly.
+                </p>
+              </>
+            ) : isOverseas ? (
+              <>
+                <h2 className="text-left text-sm font-bold tracking-wide text-slate-900">
+                  PART III — OATH AND APPLICATION TO VOTE OVERSEAS
+                </h2>
+                <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
+                  I swear that the above statements are true and correct; that I possess all the qualifications
+                  and none of the disqualifications of an overseas voter; that I hereby apply to vote overseas;
+                  that my name be included in the Lists of Overseas Voters; and that I give consent to the
+                  processing of the information stated herein by the Commission on Elections for registration,
+                  election and other purposes as may be provided by law including B.P. Blg. 881, R.A. No. 8189,
+                  R.A. No. 9189, R.A. No. 10367 and R.A. No. 10173 also known as the Data Privacy Act of 2012.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-left text-sm font-bold tracking-wide text-slate-900">
+                  APPLICANT&apos;S DECLARATION
+                </h2>
+                <p className="mt-4 text-left text-sm leading-relaxed text-slate-600">
+                  I, the undersigned, do hereby affirm that I am a citizen of the Philippines,
+                  not otherwise disqualified by law, and I have the qualifications required by
+                  the Constitution and by existing laws for the exercise of the right of
+                  suffrage. I declare that the entries made above are true, correct and complete
+                  to the best of my knowledge. I fully understand that any false statement herein
+                  constitutes a ground for election offense under Section 12 of RA 8189 and other
+                  applicable laws.
+                </p>
+              </>
+            )}
 
             <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-[1fr_260px]">
               <div>
