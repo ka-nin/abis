@@ -5,6 +5,7 @@ import UserLanding from './pages/user/UserLanding'
 import Intro from './pages/user/Intro'
 import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
+import CorrectionEdit from './pages/user/CorrectionEdit'
 import Step2 from './pages/user/Step2'
 import Step3 from './pages/user/Step3'
 import Step4 from './pages/user/Step4'
@@ -29,6 +30,7 @@ function App() {
   const [adminPage, setAdminPage] = useState('dashboard')
   const [dashboardTab, setDashboardTab] = useState('Overview')
   const [regTypes, setRegTypes] = useState(['new'])
+  const [correctionFields, setCorrectionFields] = useState([])
 
   if (step === 'admin') {
     const handleAdminLogout = () => setStep('role')
@@ -126,15 +128,38 @@ function App() {
   if (step === 'step2') {
     return (
       <Step2
-        onBack={() => setStep('step1')}
+        onBack={() => setStep(regTypes.includes('correction') ? 'correctionEdit' : 'step1')}
         onVerify={() => setStep('step3')}
         onVerifyEmail={() => setStep('step3')}
       />
     )
   }
 
+  if (step === 'correctionEdit') {
+    return (
+      <CorrectionEdit
+        fields={correctionFields}
+        onBack={() => setStep('step1')}
+        onContinue={() => setStep('step2')}
+      />
+    )
+  }
+
   if (step === 'step1') {
-    return <Step1 types={regTypes} onBack={() => setStep('terms')} onContinue={() => setStep('step2')} />
+    return (
+      <Step1
+        types={regTypes}
+        onBack={() => setStep('terms')}
+        onContinue={(fields) => {
+          if (regTypes.includes('correction')) {
+            setCorrectionFields(fields || [])
+            setStep('correctionEdit')
+          } else {
+            setStep('step2')
+          }
+        }}
+      />
+    )
   }
 
   if (step === 'terms') {

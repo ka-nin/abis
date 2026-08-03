@@ -545,7 +545,8 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
             <Section roman={romanOf('correction')} icon={FileTextIcon} title="CORRECTION DETAILS">
               <div className="flex flex-col gap-4 text-left">
                 <p className="text-sm text-slate-500">
-                  Check the entries you wish to correct, then provide the current and corrected values.
+                  Check the entries you wish to correct. You will be asked to provide the current and
+                  corrected values for each one on the next page.
                 </p>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {CORRECTABLE_FIELDS.map((field) => (
@@ -556,14 +557,6 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
                       label={field}
                     />
                   ))}
-                </div>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field label="Current Entry (as on file)" required>
-                    <TextInput placeholder="e.g. Maria Cruz Santos" />
-                  </Field>
-                  <Field label="Corrected Entry" required>
-                    <TextInput placeholder="e.g. Maria Cruz Santos-Reyes" />
-                  </Field>
                 </div>
                 <Field label="Reason for Correction" required>
                   <Select defaultValue="">
@@ -1331,7 +1324,7 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
           </button>
           <button
             type="button"
-            onClick={onContinue}
+            onClick={() => (isCorrection ? onContinue(correctFields) : onContinue())}
             className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-900/20 transition-colors hover:bg-blue-800"
           >
             Save &amp; Continue
