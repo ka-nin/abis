@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import RoleSelect from './pages/RoleSelect'
+import ApplicationType from './pages/user/ApplicationType'
 import UserLanding from './pages/user/UserLanding'
 import Intro from './pages/user/Intro'
 import TermsCon from './pages/user/TermsCon'
@@ -15,8 +16,6 @@ import Step9 from './pages/user/Step9'
 import Step10 from './pages/user/Step10'
 import Step11 from './pages/user/Step11'
 import Step12 from './pages/user/Step12'
-import { ArrowLeftIcon } from './components/icons'
-import BrandLockup from './components/BrandLockup'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import DM_Import from './pages/admin/DM_Import'
 import VerifiedVoters from './pages/admin/VerifiedVoters'
@@ -149,12 +148,16 @@ function App() {
 
   if (step === 'register') {
     return (
-      <Intro onBack={() => setStep('landing')} onVerify={() => setStep('terms')} />
+      <Intro onBack={() => setStep('applicationType')} onVerify={() => setStep('terms')} />
     )
   }
 
+  if (step === 'applicationType') {
+    return <ApplicationType onBack={() => setStep('landing')} onContinue={() => setStep('register')} />
+  }
+
   if (step === 'landing') {
-    return <UserLanding onStart={() => setStep('register')} />
+    return <UserLanding onStart={() => setStep('applicationType')} />
   }
 
   return (
