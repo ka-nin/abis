@@ -4,6 +4,48 @@ import RegistrationStepper from '../../components/RegistrationStepper'
 
 const VRN = 'VRN-2026-089235'
 
+const TYPE_CONTENT = {
+  new: {
+    title: 'Registration Successful!',
+    description:
+      'Your voter registration has been completed. Your biometrics have been enrolled in the national database.',
+    numberLabel: 'Voter Registration Number',
+  },
+  transfer: {
+    title: 'Transfer Complete!',
+    description: 'Your voter registration record has been transferred to your new address.',
+    numberLabel: 'Voter Registration Number',
+  },
+  reactivation: {
+    title: 'Reactivation Successful!',
+    description: 'Your voter registration record has been reactivated and is now active.',
+    numberLabel: 'Voter Registration Number',
+  },
+  correction: {
+    title: 'Correction Submitted!',
+    description:
+      'Your requested corrections have been submitted and will be reflected in your registration record.',
+    numberLabel: 'Correction Reference Number',
+  },
+  sk: {
+    title: 'SK Registration Successful!',
+    description:
+      'Your Sangguniang Kabataan registration has been completed and enrolled in the national database.',
+    numberLabel: 'SK Voter Registration Number',
+  },
+  overseas: {
+    title: 'Overseas Voter Certification Issued!',
+    description: 'Your certification as an overseas voter has been issued for the next National Elections.',
+    numberLabel: 'Overseas Voter Certification Number',
+  },
+}
+
+const DEFAULT_CONTENT = {
+  title: 'Application Submitted Successfully!',
+  description: 'Your combined application has been processed and enrolled in the national database.',
+  numberLabel: 'Reference Number',
+}
+
 const REGISTRATION_FIELDS = [
   { label: 'Name', value: 'Maria C. Santos' },
   { label: 'Date Registered', value: 'Jul 26, 2026' },
@@ -47,7 +89,10 @@ function HomeIcon({ className = '' }) {
   )
 }
 
-export default function Step12({ onDownloadReceipt, onEmailReceipt, onReturnHome }) {
+export default function Step12({ types: rawTypes, onDownloadReceipt, onEmailReceipt, onReturnHome }) {
+  const types = rawTypes && rawTypes.length ? rawTypes : ['new']
+  const content = types.length === 1 ? (TYPE_CONTENT[types[0]] ?? DEFAULT_CONTENT) : DEFAULT_CONTENT
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
@@ -68,14 +113,11 @@ export default function Step12({ onDownloadReceipt, onEmailReceipt, onReturnHome
           Step 12 of 12
         </span>
 
-        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">Registration Successful!</h1>
-        <p className="mt-3 text-base text-slate-500">
-          Your voter registration has been completed. Your biometrics have been enrolled in the national
-          database.
-        </p>
+        <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900">{content.title}</h1>
+        <p className="mt-3 text-base text-slate-500">{content.description}</p>
 
         <div className="mt-8 w-full rounded-2xl border border-slate-200 bg-white p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Voter Registration Number</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{content.numberLabel}</p>
           <p className="mt-1 text-2xl font-extrabold text-blue-700">{VRN}</p>
 
           <div className="mx-auto mt-4 flex h-32 w-32 flex-col items-center justify-center gap-1 rounded-xl border border-slate-200 bg-slate-50">

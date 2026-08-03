@@ -5,12 +5,22 @@ import RegistrationStepper from '../../components/RegistrationStepper'
 
 const STEP_DURATION_MS = 2000 // temporary fixed delay per check
 
-const RECORD_CHECKS = [
+const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas']
+
+const NEW_RECORD_CHECKS = [
   'Connecting to PSA National Registry',
   'Validating ID Number',
   'Retrieving Civil Records',
   'Cross-referencing with COMELEC',
   'Identity Confirmed',
+]
+
+const EXISTING_RECORD_CHECKS = [
+  'Connecting to COMELEC Voter Registration System',
+  'Validating ID Number',
+  'Retrieving Existing Registration Record',
+  'Cross-referencing with PSA Civil Registry',
+  'Record Located & Confirmed',
 ]
 
 const RETRIEVED_INFO = [
@@ -52,7 +62,11 @@ function CheckItem({ label, status, isFinal }) {
   )
 }
 
-export default function Step4({ onBack, onContinue }) {
+export default function Step4({ types: rawTypes, onBack, onContinue }) {
+  const types = rawTypes && rawTypes.length ? rawTypes : ['new']
+  const isExistingRecord = types.some((t) => EXISTING_RECORD_TYPES.includes(t))
+  const RECORD_CHECKS = isExistingRecord ? EXISTING_RECORD_CHECKS : NEW_RECORD_CHECKS
+
   const [completedCount, setCompletedCount] = useState(0)
   const isComplete = completedCount >= RECORD_CHECKS.length
 
@@ -87,10 +101,22 @@ export default function Step4({ onBack, onContinue }) {
         </span>
 
         <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-slate-900">
-          {isComplete ? 'Government Records Retrieved' : 'Retrieving Government Records'}
+          {isExistingRecord
+            ? isComplete
+              ? 'Existing Record Retrieved'
+              : 'Retrieving Your Registration Record'
+            : isComplete
+              ? 'Government Records Retrieved'
+              : 'Retrieving Government Records'}
         </h1>
         <p className="mt-3 text-base text-slate-500">
-          {isComplete ? 'Your identity has been verified.' : 'Please wait while we verify your identity…'}
+          {isExistingRecord
+            ? isComplete
+              ? 'Your existing registration record has been located and confirmed.'
+              : 'Please wait while we locate your existing registration record…'
+            : isComplete
+              ? 'Your identity has been verified.'
+              : 'Please wait while we verify your identity…'}
         </p>
 
         <div className="mt-8 w-full rounded-2xl border border-slate-200 bg-white p-6 text-left">
@@ -106,7 +132,9 @@ export default function Step4({ onBack, onContinue }) {
 
         {isComplete && (
           <div className="mt-4 w-full rounded-2xl border border-slate-200 bg-white p-6 text-left">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Retrieved Information</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              {isExistingRecord ? 'Existing Record Details' : 'Retrieved Information'}
+            </p>
             <ul className="mt-3 divide-y divide-slate-100">
               {RETRIEVED_INFO.map((item) => (
                 <li key={item.label} className="flex items-center justify-between py-2.5 text-sm">

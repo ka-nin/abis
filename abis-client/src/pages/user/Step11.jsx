@@ -2,13 +2,15 @@ import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, InfoCircleIcon } from '
 import BrandLockup from '../../components/BrandLockup'
 import RegistrationStepper from '../../components/RegistrationStepper'
 
+const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas']
+
 const SEARCH_STATS = [
   { key: 'checked', value: '869,173', label: 'Records Checked' },
   { key: 'hits', value: '0', label: 'Potential Hits' },
   { key: 'confidence', value: '99.7%', label: 'Confidence' },
 ]
 
-const VERIFICATION_CHECKLIST = [
+const NEW_APPLICANT_CHECKLIST = [
   'Identity confirmed against PSA Civil Registry',
   'No existing voter registration found',
   'Fingerprint uniqueness verified',
@@ -18,7 +20,21 @@ const VERIFICATION_CHECKLIST = [
   'No blacklist or watchlist match',
 ]
 
-export default function Step11({ onBack, onContinue }) {
+const EXISTING_RECORD_CHECKLIST = [
+  'Identity confirmed against PSA Civil Registry',
+  'Existing voter registration record matched',
+  'Fingerprint uniqueness verified',
+  'Facial biometric validated against record on file',
+  'Government ID cross-referenced',
+  'Liveness detection passed',
+  'No blacklist or watchlist match',
+]
+
+export default function Step11({ types: rawTypes, onBack, onContinue }) {
+  const types = rawTypes && rawTypes.length ? rawTypes : ['new']
+  const isExistingRecord = types.some((t) => EXISTING_RECORD_TYPES.includes(t))
+  const checklist = isExistingRecord ? EXISTING_RECORD_CHECKLIST : NEW_APPLICANT_CHECKLIST
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
@@ -49,13 +65,26 @@ export default function Step11({ onBack, onContinue }) {
               <CheckCircleIcon className="h-5 w-5" />
             </span>
             <div>
-              <p className="text-base font-bold text-slate-900">No Duplicate Records Found</p>
-              <p className="mt-0.5 text-sm text-slate-500">Searched 869,173 voter records — 0 matches found</p>
+              <p className="text-base font-bold text-slate-900">
+                {isExistingRecord ? 'Existing Record Matched & Confirmed' : 'No Duplicate Records Found'}
+              </p>
+              <p className="mt-0.5 text-sm text-slate-500">
+                {isExistingRecord
+                  ? 'Searched 869,173 voter records — 1 matching record confirmed'
+                  : 'Searched 869,173 voter records — 0 matches found'}
+              </p>
             </div>
           </div>
 
           <div className="mt-5 grid grid-cols-3 gap-3">
-            {SEARCH_STATS.map((stat) => (
+            {(isExistingRecord
+              ? [
+                  { key: 'checked', value: '869,173', label: 'Records Checked' },
+                  { key: 'hits', value: '1', label: 'Matching Record' },
+                  { key: 'confidence', value: '99.7%', label: 'Confidence' },
+                ]
+              : SEARCH_STATS
+            ).map((stat) => (
               <div key={stat.key} className="rounded-xl bg-slate-50 p-4 text-center">
                 <p className="text-lg font-bold text-slate-900">{stat.value}</p>
                 <p className="mt-1 text-xs text-slate-500">{stat.label}</p>
@@ -67,7 +96,7 @@ export default function Step11({ onBack, onContinue }) {
         <div className="mx-auto mt-4 w-full max-w-xl rounded-2xl border border-slate-200 bg-white p-6 text-left">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Verification Checklist</p>
           <ul className="mt-3 space-y-2.5">
-            {VERIFICATION_CHECKLIST.map((item) => (
+            {checklist.map((item) => (
               <li key={item} className="flex items-center gap-2.5 text-sm text-slate-700">
                 <CheckCircleIcon className="h-4 w-4 shrink-0 text-emerald-500" />
                 {item}
@@ -79,8 +108,9 @@ export default function Step11({ onBack, onContinue }) {
         <div className="mx-auto mt-4 flex max-w-xl items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-left">
           <InfoCircleIcon className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
           <p className="text-sm text-blue-700">
-            This application is approved for registration. The applicant will be assigned a Voter Registration
-            Number (VRN) upon completion.
+            {isExistingRecord
+              ? 'This application is approved. The applicant’s existing Voter Registration Record will be updated upon completion.'
+              : 'This application is approved for registration. The applicant will be assigned a Voter Registration Number (VRN) upon completion.'}
           </p>
         </div>
 

@@ -28,6 +28,7 @@ function App() {
   const [step, setStep] = useState('role')
   const [adminPage, setAdminPage] = useState('dashboard')
   const [dashboardTab, setDashboardTab] = useState('Overview')
+  const [regTypes, setRegTypes] = useState(['new'])
 
   if (step === 'admin') {
     const handleAdminLogout = () => setStep('role')
@@ -71,11 +72,11 @@ function App() {
   }
 
   if (step === 'step12') {
-    return <Step12 onReturnHome={() => setStep('landing')} />
+    return <Step12 types={regTypes} onReturnHome={() => setStep('landing')} />
   }
 
   if (step === 'step11') {
-    return <Step11 onBack={() => setStep('step10')} onContinue={() => setStep('step12')} />
+    return <Step11 types={regTypes} onBack={() => setStep('step10')} onContinue={() => setStep('step12')} />
   }
 
   if (step === 'step10') {
@@ -83,7 +84,7 @@ function App() {
   }
 
   if (step === 'step9') {
-    return <Step9 onBack={() => setStep('step8')} onContinue={() => setStep('step10')} />
+    return <Step9 types={regTypes} onBack={() => setStep('step8')} onContinue={() => setStep('step10')} />
   }
 
   if (step === 'step8') {
@@ -115,7 +116,7 @@ function App() {
   }
 
   if (step === 'step4') {
-    return <Step4 onBack={() => setStep('step3')} onContinue={() => setStep('step5')} />
+    return <Step4 types={regTypes} onBack={() => setStep('step3')} onContinue={() => setStep('step5')} />
   }
 
   if (step === 'step3') {
@@ -133,7 +134,7 @@ function App() {
   }
 
   if (step === 'step1') {
-    return <Step1 onBack={() => setStep('terms')} onContinue={() => setStep('step2')} />
+    return <Step1 types={regTypes} onBack={() => setStep('terms')} onContinue={() => setStep('step2')} />
   }
 
   if (step === 'terms') {
@@ -153,7 +154,16 @@ function App() {
   }
 
   if (step === 'applicationType') {
-    return <ApplicationType onBack={() => setStep('landing')} onContinue={() => setStep('register')} />
+    return (
+      <ApplicationType
+        onBack={() => setStep('landing')}
+        onContinue={(selection) => {
+          const chosen = selection?.combination ? selection.types : [selection?.type]
+          setRegTypes(chosen.filter(Boolean).length ? chosen.filter(Boolean) : ['new'])
+          setStep('register')
+        }}
+      />
+    )
   }
 
   if (step === 'landing') {

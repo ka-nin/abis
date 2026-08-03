@@ -211,7 +211,10 @@ export default function ApplicationType({ onBack, onContinue }) {
   const combinationOption = APPLICATION_TYPES.find((option) => option.key === 'combination')
   const showCombinationToggle = Boolean(combinationOption?.categories.includes(category))
   const availableTypes = APPLICATION_TYPES.filter(
-    (option) => option.key !== 'combination' && option.categories.includes(category),
+    (option) =>
+      option.key !== 'combination' &&
+      option.categories.includes(category) &&
+      !(combinationMode && option.key === 'new'),
   )
 
   const isTypeSelected = combinationMode ? selectedTypes.length >= 2 : Boolean(type)
