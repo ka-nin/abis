@@ -34,6 +34,16 @@ const SPECIAL_CATEGORIES = [
 
 const CORRECTABLE_FIELDS = ['Name', 'Date of Birth', 'Civil Status', 'Address', 'Precinct Assignment', 'Other']
 
+const DEACTIVATION_GROUNDS = [
+  'Sentenced by final judgment to suffer imprisonment for not less than one (1) year',
+  'Convicted by final judgment of a crime involving disloyalty to the duly constituted government, etc.',
+  'Declared by competent authority to be insane or incompetent',
+  'Failed to vote in two (2) successive preceding regular elections',
+  'Loss of Filipino citizenship',
+  'Exclusion by a court order',
+  'Failure to Validate',
+]
+
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']
 
 function GlobeIcon({ className = '' }) {
@@ -120,6 +130,21 @@ function CheckboxOption({ checked, onChange, label }) {
   )
 }
 
+function RadioOption({ name, checked, onChange, label }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-700">
+      <input
+        type="radio"
+        name={name}
+        checked={checked}
+        onChange={onChange}
+        className="mt-0.5 h-4 w-4 accent-blue-600"
+      />
+      {label}
+    </label>
+  )
+}
+
 const todayLabel = new Date().toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
@@ -137,6 +162,9 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
 
   const [specialCategories, setSpecialCategories] = useState([])
   const [correctFields, setCorrectFields] = useState([])
+  const [transferScope, setTransferScope] = useState('')
+  const [formerRecordType, setFormerRecordType] = useState('')
+  const [deactivationGround, setDeactivationGround] = useState('')
 
   const toggleCategory = (category) => {
     setSpecialCategories((prev) =>
@@ -155,19 +183,19 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
       ? `Combined Application: ${types.map((t) => TYPE_LABELS[t] ?? t).join(' + ')}`
       : `Application for ${TYPE_LABELS[types[0]] ?? 'Voter Registration'}`
 
-  const showAddress = !isCorrection && !isOverseas
-  const addressTitle = isTransfer ? 'NEW ADDRESS (TRANSFERRING TO)' : 'DECLARATION OF ADDRESS'
+  const showAddress = !isCorrection && !isOverseas && !isTransfer
 
   const sections = [
+    isReactivation && 'reactivation',
     'personal',
     isTransfer && 'previousRecord',
-    isReactivation && 'reactivation',
     isCorrection && 'correction',
     isSK && 'guardian',
     isOverseas && 'overseas',
     showAddress && 'address',
     'specialCategories',
     'supportingDocument',
+    isTransfer && 'transferRecord',
   ].filter(Boolean)
   const romanOf = (key) => ROMAN[sections.indexOf(key)] ?? ''
 
@@ -201,6 +229,47 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
         <div className="my-8 h-0.5 rounded-full bg-blue-600" />
 
         <div className="flex flex-col gap-6">
+          {isReactivation && (
+            <Section
+              roman={romanOf('reactivation')}
+              icon={RefreshIcon}
+              title="APPLICATION FOR REACTIVATION OF REGISTRATION RECORD"
+            >
+              <div className="flex flex-col gap-4 text-left">
+                <div>
+                  <SubHeading>Reason for Deactivation</SubHeading>
+                  <div className="flex flex-col gap-2.5">
+                    {DEACTIVATION_GROUNDS.map((ground, index) => (
+                      <RadioOption
+                        key={ground}
+                        name="deactivationGround"
+                        checked={deactivationGround === ground}
+                        onChange={() => setDeactivationGround(ground)}
+                        label={`${index + 1}. ${ground}`}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs italic text-slate-500">
+                    That said ground no longer exists, as evidenced by the attached certification/order of the
+                    court (in cases of 1, 2, 3, 5, and 6).
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field label="Precinct No." required>
+                    <TextInput placeholder="e.g. 0045A" />
+                  </Field>
+                  <Field label="Date of Deactivation">
+                    <TextInput type="date" />
+                  </Field>
+                </div>
+                <Field label="Explanation / Supporting Details">
+                  <Textarea rows={3} placeholder="Briefly explain the circumstances for your reactivation request" />
+                </Field>
+              </div>
+            </Section>
+          )}
+
           <Section roman={romanOf('personal')} icon={UserIcon} title="PERSONAL INFORMATION">
             <div className="flex flex-col gap-6 text-left">
               {isCorrection && (
@@ -341,42 +410,6 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
             </Section>
           )}
 
-          {isReactivation && (
-            <Section roman={romanOf('reactivation')} icon={RefreshIcon} title="REACTIVATION DETAILS">
-              <div className="flex flex-col gap-4 text-left">
-                <p className="text-sm text-slate-500">
-                  Provide the details of your deactivated registration record.
-                </p>
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field label="Precinct No." required>
-                    <TextInput placeholder="e.g. 0045A" />
-                  </Field>
-                  <Field label="Date of Deactivation">
-                    <TextInput type="date" />
-                  </Field>
-                </div>
-                <Field label="Ground for Deactivation" required>
-                  <Select defaultValue="">
-                    <option value="" disabled>
-                      Select ground
-                    </option>
-                    <option>Sentenced by final judgment to imprisonment of not less than one (1) year</option>
-                    <option>Convicted of a crime involving disloyalty to the government</option>
-                    <option>Declared insane or incompetent</option>
-                    <option>Failure to vote in two (2) successive preceding regular elections</option>
-                    <option>Loss of Filipino citizenship</option>
-                    <option>Exclusion by a court order</option>
-                    <option>Failure to validate biometrics (R.A. 10367)</option>
-                    <option>Other</option>
-                  </Select>
-                </Field>
-                <Field label="Explanation / Supporting Details">
-                  <Textarea rows={3} placeholder="Briefly explain the circumstances for your reactivation request" />
-                </Field>
-              </div>
-            </Section>
-          )}
-
           {isCorrection && (
             <Section roman={romanOf('correction')} icon={FileTextIcon} title="CORRECTION DETAILS">
               <div className="flex flex-col gap-4 text-left">
@@ -480,7 +513,7 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
           )}
 
           {showAddress && (
-            <Section roman={romanOf('address')} icon={MapPinIcon} title={addressTitle}>
+            <Section roman={romanOf('address')} icon={MapPinIcon} title="DECLARATION OF ADDRESS">
               <div className="flex flex-col gap-4 text-left">
                 <p className="text-sm text-slate-500">
                   This must be the address of your <strong>place of residence</strong> in the
@@ -591,6 +624,109 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
               </Field>
             </div>
           </Section>
+
+          {isTransfer && (
+            <Section roman={romanOf('transferRecord')} icon={SwapIcon} title="APPLICATION FOR TRANSFER OF REGISTRATION RECORD">
+              <div className="flex flex-col gap-6 text-left">
+                <div>
+                  <SubHeading>Type of Transfer</SubHeading>
+                  <div className="flex flex-col gap-3">
+                    <RadioOption
+                      name="transferScope"
+                      checked={transferScope === 'same'}
+                      onChange={() => setTransferScope('same')}
+                      label="Within the same City/Municipality/District"
+                    />
+                    <RadioOption
+                      name="transferScope"
+                      checked={transferScope === 'another'}
+                      onChange={() => setTransferScope('another')}
+                      label="From another City/Municipality/District (Accomplish Personal Information at the back)"
+                    />
+                    <RadioOption
+                      name="transferScope"
+                      checked={transferScope === 'foreignPost'}
+                      onChange={() => setTransferScope('foreignPost')}
+                      label="From foreign post to local OEO other than original place of registration"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <SubHeading>I am a duly registered voter in</SubHeading>
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <RadioOption
+                        name="formerRecordType"
+                        checked={formerRecordType === 'local'}
+                        onChange={() => setFormerRecordType('local')}
+                        label="Local voter — former address (Precinct No. / Barangay / City / Province)"
+                      />
+                      <div className="mt-3 grid grid-cols-1 gap-4 pl-7 sm:grid-cols-2">
+                        <Field label="Precinct No.">
+                          <TextInput placeholder="e.g. 0045A" />
+                        </Field>
+                        <Field label="Barangay">
+                          <TextInput placeholder="Barangay San Isidro" />
+                        </Field>
+                        <Field label="City/District/Municipality of">
+                          <TextInput placeholder="Manila" />
+                        </Field>
+                        <Field label="Province of">
+                          <TextInput placeholder="" />
+                        </Field>
+                      </div>
+                    </div>
+
+                    <div>
+                      <RadioOption
+                        name="formerRecordType"
+                        checked={formerRecordType === 'overseas'}
+                        onChange={() => setFormerRecordType('overseas')}
+                        label="Overseas voter — foreign post located in (Country)"
+                      />
+                      <div className="mt-3 grid grid-cols-1 gap-4 pl-7 sm:grid-cols-2">
+                        <Field label="Foreign post located in">
+                          <TextInput placeholder="e.g. Philippine Embassy, Abu Dhabi" />
+                        </Field>
+                        <Field label="Country of">
+                          <TextInput placeholder="e.g. United Arab Emirates" />
+                        </Field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <SubHeading>My New Residence Is</SubHeading>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_240px]">
+                    <Field label="House No. &amp; Street / Sitio / Purok">
+                      <TextInput placeholder="123 Sampaguita Street" />
+                    </Field>
+                    <Field label="Barangay">
+                      <TextInput placeholder="Barangay 1" />
+                    </Field>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="City/Municipality/District">
+                      <TextInput placeholder="Quezon City" />
+                    </Field>
+                    <Field label="Province">
+                      <TextInput placeholder="" />
+                    </Field>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="I have resided in my new residence for (years)">
+                      <TextInput placeholder="e.g. 2" />
+                    </Field>
+                    <Field label="and (months)">
+                      <TextInput placeholder="e.g. 6" />
+                    </Field>
+                  </div>
+                </div>
+              </div>
+            </Section>
+          )}
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
             <h2 className="text-left text-sm font-bold tracking-wide text-slate-900">
