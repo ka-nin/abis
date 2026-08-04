@@ -604,6 +604,20 @@ export function EyeIcon({ className = '' }) {
   )
 }
 
+export function EyeOffIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M9.4 5.4C10.2 5.15 11.07 5 12 5c6 0 9.5 6.5 9.5 6.5a13.5 13.5 0 0 1-3.06 3.75M6.5 6.9A13.6 13.6 0 0 0 2.5 11.5S6 18 12 18c1.15 0 2.22-.18 3.2-.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function ZapIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
