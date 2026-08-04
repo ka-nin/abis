@@ -4,8 +4,19 @@ import { DownloadIcon, RefreshIcon, UsersIcon, TrendUpIcon, XCircleIcon, StarIco
 import RS_BioReport from './RS_BioReport'
 import RS_AdjAnalytics from './RS_AdjAnalytics'
 import RS_MReport from './RS_MReport'
+import RS_IdAttempts from './RS_IdAttempts'
+import RS_VoterLists from './RS_VoterLists'
+import RS_SectoralReport from './RS_SectoralReport'
 
-const TABS = ['Voter Reports', 'Biometric Reports', 'Adjudication Analytics', 'Migration Reports']
+const TABS = [
+  'Voter Reports',
+  'Biometric Reports',
+  'Identification Attempts',
+  'Sectoral Categories',
+  'Adjudication Analytics',
+  'Migration Reports',
+  'Voter List Generation',
+]
 
 const VOTER_STATS = [
   {
@@ -270,8 +281,11 @@ export default function RS_VReport({ onNavigate, onLogout, onBellClick }) {
 
       {activeTab === 'Voter Reports' && <VoterReportsTab />}
       {activeTab === 'Biometric Reports' && <RS_BioReport />}
+      {activeTab === 'Identification Attempts' && <RS_IdAttempts />}
+      {activeTab === 'Sectoral Categories' && <RS_SectoralReport />}
       {activeTab === 'Adjudication Analytics' && <RS_AdjAnalytics />}
       {activeTab === 'Migration Reports' && <RS_MReport />}
+      {activeTab === 'Voter List Generation' && <RS_VoterLists />}
     </AdminLayout>
   )
 }

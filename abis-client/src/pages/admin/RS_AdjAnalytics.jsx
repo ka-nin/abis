@@ -34,6 +34,14 @@ const ADJUDICATION_STATS = [
     iconBg: 'bg-emerald-50',
     iconColor: 'text-emerald-600',
   },
+  {
+    key: 'avgResolutionTime',
+    label: 'Avg Resolution Time',
+    value: '1.8 days',
+    icon: ClockIcon,
+    iconBg: 'bg-violet-50',
+    iconColor: 'text-violet-600',
+  },
 ]
 
 const CASES_BY_TYPE = [
@@ -46,6 +54,16 @@ const CASES_BY_TYPE = [
 ]
 const CHART_TICKS = [0, 1500, 3000, 4500, 6000]
 const CHART_MAX = 6000
+
+const FLAGGING_REASONS = [
+  { reason: 'Fingerprint score below threshold', count: 2140, share: 16.7 },
+  { reason: 'Possible duplicate record detected', count: 1860, share: 14.5 },
+  { reason: 'Name mismatch with PSA civil registry record', count: 1420, share: 11.1 },
+  { reason: 'Provided ID could not be verified with issuer', count: 1110, share: 8.6 },
+  { reason: 'Face recognition liveness check failed', count: 980, share: 7.6 },
+  { reason: 'System error during biometric capture session', count: 640, share: 5.0 },
+  { reason: 'Watchlist hit — requires manual review', count: 140, share: 1.1 },
+]
 
 function StatCard({ label, value, icon: Icon, iconBg, iconColor }) {
   return (
@@ -155,16 +173,43 @@ function CasesByTypeChart() {
   )
 }
 
+function FlaggingReasonsBreakdown() {
+  const maxCount = Math.max(...FLAGGING_REASONS.map((r) => r.count))
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <h2 className="text-sm font-semibold text-slate-900">Common Flagging Reasons</h2>
+      <p className="mt-1 text-xs text-slate-400">Share of adjudication cases by the reason they were flagged.</p>
+
+      <ul className="mt-4 flex flex-col gap-3">
+        {FLAGGING_REASONS.map((r) => (
+          <li key={r.reason}>
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="text-slate-700">{r.reason}</span>
+              <span className="flex-shrink-0 font-semibold text-slate-900">
+                {r.count.toLocaleString()} <span className="text-slate-400">({r.share}%)</span>
+              </span>
+            </div>
+            <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
+              <div className="h-full rounded-full bg-blue-600" style={{ width: `${(r.count / maxCount) * 100}%` }} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export default function RS_AdjAnalytics() {
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {ADJUDICATION_STATS.map(({ key, ...card }) => (
           <StatCard key={key} {...card} />
         ))}
       </div>
 
       <CasesByTypeChart />
+      <FlaggingReasonsBreakdown />
     </div>
   )
 }

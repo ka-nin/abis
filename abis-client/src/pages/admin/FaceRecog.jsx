@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CameraIcon, WifiIcon } from '../../components/icons'
+import { CameraIcon, WifiIcon, CheckCircleIcon, XCircleIcon, AlertTriangleIcon } from '../../components/icons'
 
 const TODAY_STATS = [
   { key: 'scans', label: 'Scans', value: '1,623' },
@@ -8,6 +8,40 @@ const TODAY_STATS = [
   { key: 'avgQuality', label: 'Avg Quality', value: '88.1' },
   { key: 'rejections', label: 'Rejections', value: '34' },
 ]
+
+const LATEST_CAPTURE = {
+  vrn: 'VRN-2026-005512',
+  brightness: 76,
+  pitch: 3.2,
+  roll: 1.8,
+  yaw: 4.6,
+  occlusion: 2.1,
+}
+
+const DECISION_STYLES = {
+  Accepted: 'bg-emerald-50 text-emerald-700',
+  Rejected: 'bg-red-50 text-red-600',
+  Flagged: 'bg-amber-50 text-amber-700',
+}
+
+function QualityMetric({ label, value, unit = '', pass }) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="text-xs text-slate-400">{label}</p>
+      <p className="mt-1 text-xl font-bold text-slate-900">
+        {value}
+        {unit}
+      </p>
+      <span
+        className={`mt-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+          pass ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
+        }`}
+      >
+        {pass ? 'Pass' : 'Below Threshold'}
+      </span>
+    </div>
+  )
+}
 
 function Field({ label, value, onChange }) {
   return (
@@ -31,6 +65,8 @@ export default function FaceRecog() {
     timeout: '30',
   })
 
+  const [decision, setDecision] = useState(null)
+
   const updateField = (key) => (event) => {
     setSettings((prev) => ({ ...prev, [key]: event.target.value }))
   }
@@ -46,6 +82,11 @@ export default function FaceRecog() {
   const handleCalibrate = () => {
     // Start device calibration routine
   }
+
+  const qualityThreshold = Number(settings.qualityThreshold) || 0
+  const brightnessPass = LATEST_CAPTURE.brightness >= qualityThreshold
+  const poseOk = Math.abs(LATEST_CAPTURE.pitch) <= 10 && Math.abs(LATEST_CAPTURE.roll) <= 10 && Math.abs(LATEST_CAPTURE.yaw) <= 10
+  const occlusionOk = LATEST_CAPTURE.occlusion <= 10
 
   return (
     <div className="max-h-[calc(100vh-260px)] overflow-y-auto pr-1">
@@ -116,6 +157,59 @@ export default function FaceRecog() {
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">Latest Capture Quality</h2>
+            <p className="text-xs text-slate-400">{LATEST_CAPTURE.vrn} · Facial capture parameters</p>
+          </div>
+          {decision && (
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${DECISION_STYLES[decision]}`}>
+              {decision}
+            </span>
+          )}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <QualityMetric label="Brightness" value={LATEST_CAPTURE.brightness} unit="%" pass={brightnessPass} />
+          <QualityMetric label="Pitch" value={LATEST_CAPTURE.pitch} unit="°" pass={Math.abs(LATEST_CAPTURE.pitch) <= 10} />
+          <QualityMetric label="Roll" value={LATEST_CAPTURE.roll} unit="°" pass={Math.abs(LATEST_CAPTURE.roll) <= 10} />
+          <QualityMetric label="Yaw" value={LATEST_CAPTURE.yaw} unit="°" pass={Math.abs(LATEST_CAPTURE.yaw) <= 10} />
+          <QualityMetric label="Occlusion" value={LATEST_CAPTURE.occlusion} unit="%" pass={occlusionOk} />
+        </div>
+
+        {!poseOk && (
+          <p className="mt-3 text-xs text-amber-600">Pose angle (pitch/roll/yaw) exceeds the recommended ±10° range.</p>
+        )}
+
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Accepted' ? null : 'Accepted'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
+          >
+            <CheckCircleIcon className="h-4 w-4" />
+            Accept
+          </button>
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Rejected' ? null : 'Rejected'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+          >
+            <XCircleIcon className="h-4 w-4" />
+            Reject
+          </button>
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Flagged' ? null : 'Flagged'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition-colors hover:bg-amber-100"
+          >
+            <AlertTriangleIcon className="h-4 w-4" />
+            Flag for Review
+          </button>
         </div>
       </div>
     </div>

@@ -15,6 +15,8 @@ import {
   TrendUpIcon,
   TrendDownIcon,
   InfoCircleIcon,
+  DatabaseIcon,
+  ArrowRightIcon,
 } from '../../components/icons'
 
 const TABS = [
@@ -87,6 +89,13 @@ const VOTER_STATUS = [
   { key: 'pending', label: 'Pending', value: 4.2, color: '#f59e0b' },
   { key: 'deactivated', label: 'Deactivated', value: 2.1, color: '#ef4444' },
 ]
+
+const MIGRATION_STATUS = {
+  dbSize: '2.4 TB',
+  lastSync: 'Today 08:00 AM',
+  pendingSync: '1,247',
+  lastBatch: { filename: 'voters_region3_batch4.csv', records: '85,240', status: 'Success', date: 'Jul 26, 2026' },
+}
 
 const RECENT_ACTIVITY = [
   { title: 'New registration completed', subtitle: 'Maria C. Santos', time: '2 min ago', dot: 'bg-emerald-500' },
@@ -345,7 +354,67 @@ function RecentActivity() {
   )
 }
 
-function OverviewTab() {
+function MigrationStatusCard({ onViewMigration }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-slate-900">Migration Status</h2>
+        <button
+          type="button"
+          onClick={onViewMigration}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+        >
+          View Data Migration
+          <ArrowRightIcon className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-blue-50">
+            <DatabaseIcon className="h-5 w-5 text-blue-600" />
+          </span>
+          <div>
+            <p className="text-xs text-slate-400">DB Size</p>
+            <p className="text-sm font-semibold text-slate-900">{MIGRATION_STATUS.dbSize}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-50">
+            <RefreshIcon className="h-5 w-5 text-emerald-600" />
+          </span>
+          <div>
+            <p className="text-xs text-slate-400">Last Sync</p>
+            <p className="text-sm font-semibold text-slate-900">{MIGRATION_STATUS.lastSync}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-amber-50">
+            <ClockIcon className="h-5 w-5 text-amber-600" />
+          </span>
+          <div>
+            <p className="text-xs text-slate-400">Pending Sync</p>
+            <p className="text-sm font-semibold text-slate-900">{MIGRATION_STATUS.pendingSync}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-4 py-3">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium text-slate-900">{MIGRATION_STATUS.lastBatch.filename}</p>
+          <p className="text-xs text-slate-400">
+            {MIGRATION_STATUS.lastBatch.records} records · {MIGRATION_STATUS.lastBatch.date}
+          </p>
+        </div>
+        <span className="inline-flex flex-shrink-0 items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+          {MIGRATION_STATUS.lastBatch.status}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+function OverviewTab({ onNavigate }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3">
@@ -371,6 +440,8 @@ function OverviewTab() {
         </div>
         <VoterStatusDonut />
       </div>
+
+      <MigrationStatusCard onViewMigration={() => onNavigate?.('data-migration')} />
 
       <RecentActivity />
     </div>
@@ -475,7 +546,7 @@ export default function AdminDashboard({ onNavigate, onLogout, initialTab, onBel
         ))}
       </div>
 
-      {activeTab === 'Overview' && <OverviewTab />}
+      {activeTab === 'Overview' && <OverviewTab onNavigate={onNavigate} />}
       {activeTab === 'System Status' && <SystemStatus />}
       {activeTab === 'Alerts & Notifications' && <Notifications />}
       {activeTab === 'Data Visualization' && <DataVisualization />}

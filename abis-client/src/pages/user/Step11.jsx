@@ -2,7 +2,7 @@ import { ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, InfoCircleIcon } from '
 import BrandLockup from '../../components/BrandLockup'
 import RegistrationStepper from '../../components/RegistrationStepper'
 
-const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas']
+const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas', 'validation']
 
 const SEARCH_STATS = [
   { key: 'checked', value: '869,173', label: 'Records Checked' },

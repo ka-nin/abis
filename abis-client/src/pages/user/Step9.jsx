@@ -65,6 +65,12 @@ const OVERSEAS_INFO = [
   { label: 'Existing Precinct No.', value: '0045A' },
 ]
 
+const VALIDATION_INFO = [
+  { label: 'Existing Precinct No. / VRN', value: 'VRN-2019-441207' },
+  { label: 'Date of Original Registration', value: 'Mar 14, 2019' },
+  { label: 'Reason Biometrics Were Incomplete', value: 'Device unavailable during original registration' },
+]
+
 function InfoBlock({ title, fields }) {
   return (
     <div className="mx-auto mt-4 max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-left">
@@ -147,6 +153,7 @@ export default function Step9({ types: rawTypes, onBack, onContinue }) {
         {has('correction') && <InfoBlock title="Correction Details" fields={CORRECTION_INFO} />}
         {has('sk') && <InfoBlock title="Parent / Guardian Information" fields={GUARDIAN_INFO} />}
         {has('overseas') && <InfoBlock title="Overseas Voter Details" fields={OVERSEAS_INFO} />}
+        {has('validation') && <InfoBlock title="Validation of Biometrics" fields={VALIDATION_INFO} />}
 
         <div className="mx-auto mt-4 flex max-w-2xl items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-left">
           <AlertTriangleIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />

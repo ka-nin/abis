@@ -1,4 +1,4 @@
-import { ClockIcon, ZapIcon, TrendDownIcon } from '../../components/icons'
+import { ClockIcon, ZapIcon, TrendDownIcon, CheckCircleIcon, XCircleIcon } from '../../components/icons'
 
 const QUEUE_STATS = [
   {
@@ -18,6 +18,22 @@ const QUEUE_STATS = [
     iconColor: 'text-blue-600',
   },
   {
+    key: 'completed',
+    label: 'Completed Today',
+    value: '4,926',
+    icon: CheckCircleIcon,
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+  },
+  {
+    key: 'error',
+    label: 'Error',
+    value: '18',
+    icon: XCircleIcon,
+    iconBg: 'bg-red-50',
+    iconColor: 'text-red-500',
+  },
+  {
     key: 'avgWait',
     label: 'Avg Wait',
     value: '4.2 min',
@@ -33,6 +49,9 @@ const LIVE_QUEUE = [
   { id: 'Q-003', name: 'Ana Reyes', step: 'Personal Info', wait: '8 min', station: '—', status: 'Waiting' },
   { id: 'Q-004', name: 'Pedro Bautista', step: 'OTP Verification', wait: '11 min', station: '—', status: 'Waiting' },
   { id: 'Q-005', name: 'Rosa Mendoza', step: 'Registration', wait: '14 min', station: '—', status: 'Waiting' },
+  { id: 'Q-006', name: 'Carlos Villanueva', step: 'Registration', wait: '—', station: 'Station 3', status: 'Completed' },
+  { id: 'Q-007', name: 'Liza Fernandez', step: 'Biometric Capture', wait: '—', station: 'Station 1', status: 'Completed' },
+  { id: 'Q-008', name: 'Mark Domingo', step: 'Fingerprint Scan', wait: '—', station: 'Station 4', status: 'Error' },
 ]
 
 function StatCard({ label, value, icon: Icon, iconBg, iconColor }) {
@@ -49,12 +68,18 @@ function StatCard({ label, value, icon: Icon, iconBg, iconColor }) {
   )
 }
 
+const STATUS_STYLES = {
+  Processing: 'bg-blue-50 text-blue-700',
+  Waiting: 'bg-slate-100 text-slate-600',
+  Completed: 'bg-emerald-50 text-emerald-700',
+  Error: 'bg-red-50 text-red-600',
+}
+
 function StatusBadge({ status }) {
-  const isProcessing = status === 'Processing'
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-        isProcessing ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
+        STATUS_STYLES[status] || 'bg-slate-100 text-slate-600'
       }`}
     >
       {status}
@@ -65,7 +90,7 @@ function StatusBadge({ status }) {
 export default function Queueing() {
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {QUEUE_STATS.map(({ key, ...card }) => (
           <StatCard key={key} {...card} />
         ))}

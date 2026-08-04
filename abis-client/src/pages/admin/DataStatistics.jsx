@@ -1,4 +1,61 @@
-import { DownloadIcon } from '../../components/icons'
+import { DownloadIcon, UserIcon, StarIcon, ShieldIcon, AlertTriangleIcon, LockIcon } from '../../components/icons'
+
+const DEMOGRAPHIC_STATS = [
+  {
+    key: 'male',
+    label: 'Male Voters',
+    value: '32.1M',
+    meta: '49.2% of total',
+    icon: UserIcon,
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+  },
+  {
+    key: 'female',
+    label: 'Female Voters',
+    value: '33.1M',
+    meta: '50.8% of total',
+    icon: UserIcon,
+    iconBg: 'bg-pink-50',
+    iconColor: 'text-pink-600',
+  },
+  {
+    key: 'seniorCitizen',
+    label: 'Senior Citizens (60+)',
+    value: '8.4M',
+    meta: '12.9% of total',
+    icon: StarIcon,
+    iconBg: 'bg-amber-50',
+    iconColor: 'text-amber-600',
+  },
+  {
+    key: 'pwd',
+    label: 'PWD Voters',
+    value: '1.2M',
+    meta: '1.8% of total',
+    icon: ShieldIcon,
+    iconBg: 'bg-violet-50',
+    iconColor: 'text-violet-600',
+  },
+  {
+    key: 'pdl',
+    label: 'PDL Voters',
+    value: '84,200',
+    meta: 'Persons Deprived of Liberty',
+    icon: LockIcon,
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
+  },
+  {
+    key: 'hits',
+    label: 'Biometric / Watchlist Hits',
+    value: '142',
+    meta: 'Flagged this month',
+    icon: AlertTriangleIcon,
+    iconBg: 'bg-red-50',
+    iconColor: 'text-red-500',
+  },
+]
 
 const REGIONAL_STATISTICS = [
   {
@@ -66,6 +123,21 @@ const REGIONAL_STATISTICS = [
   },
 ]
 
+function DemographicStatCard({ label, value, meta, icon: Icon, iconBg, iconColor }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="flex items-start justify-between">
+        <p className="text-sm text-slate-500">{label}</p>
+        <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconBg}`}>
+          <Icon className={`h-5 w-5 ${iconColor}`} />
+        </span>
+      </div>
+      <p className="mt-3 text-2xl font-bold text-slate-900">{value}</p>
+      <p className="mt-1 text-xs text-slate-400">{meta}</p>
+    </div>
+  )
+}
+
 function StatCell({ value, isPercentage }) {
   return (
     <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-900">
@@ -108,6 +180,12 @@ export default function DataStatistics() {
 
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {DEMOGRAPHIC_STATS.map(({ key, ...card }) => (
+          <DemographicStatCard key={key} {...card} />
+        ))}
+      </div>
+
       <div className="rounded-2xl border border-slate-200 bg-white p-5">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-slate-900">Data Statistics by Region</h2>
