@@ -1,9 +1,24 @@
 import { useRef, useState } from 'react'
 import AdminLayout from '../../layouts/AdminLayout'
-import { RefreshIcon, DownloadIcon, ArchiveIcon, ClockIcon, CheckCircleIcon } from '../../components/icons'
+import { RefreshIcon, DownloadIcon, ArchiveIcon, ClockIcon, CheckCircleIcon, MapPinIcon } from '../../components/icons'
 import DM_Export from './DM_Export'
 import DM_DbStatus from './DM_DbStatus'
 import DM_Quality from './DM_Quality'
+
+function GlobeIcon({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M3 12h18" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9S9.5 5.5 12 3z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 const REQUIRED_COLUMNS = [
   'voter_id',
@@ -47,6 +62,36 @@ const RECENT_IMPORTS = [
   { filename: 'batch_biometric_sync.json', records: '5,200', duplicates: 4, status: 'Success', date: 'Jul 23, 2026', by: 'System' },
 ]
 
+const OV_MATCHES = [
+  {
+    key: 'ov1',
+    localVrn: 'VRN-2019-441207',
+    localName: 'SANTOS, Maria Cruz',
+    localPrecinct: 'QC-0089-A',
+    ovVrn: 'VRN-OV-2021-008842',
+    ovPost: 'Philippine Embassy, Abu Dhabi',
+    matchScore: 96.4,
+  },
+  {
+    key: 'ov2',
+    localVrn: 'VRN-2020-556781',
+    localName: 'MENDOZA, Rosa T.',
+    localPrecinct: 'DAV-0012-B',
+    ovVrn: 'VRN-OV-2022-014410',
+    ovPost: 'Philippine Consulate, Dubai',
+    matchScore: 91.8,
+  },
+  {
+    key: 'ov3',
+    localVrn: 'VRN-2018-775501',
+    localName: 'GARCIA, Luis A.',
+    localPrecinct: 'CEB-0041-A',
+    ovVrn: 'VRN-OV-2020-902213',
+    ovPost: 'Philippine Embassy, Riyadh',
+    matchScore: 88.5,
+  },
+]
+
 const TABS = ['Import Data', 'Export Data', 'Database Status', 'Quality & Monitoring']
 
 const STATUS_STYLES = {
@@ -60,6 +105,89 @@ function StatusBadge({ status }) {
     <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLES[status] || 'bg-slate-100 text-slate-600'}`}>
       {status}
     </span>
+  )
+}
+
+function OvAnnotationCard() {
+  const [annotated, setAnnotated] = useState({})
+
+  const handleAccept = (key) => {
+    setAnnotated((prev) => ({ ...prev, [key]: true }))
+  }
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="flex items-center gap-2">
+        <GlobeIcon className="h-4 w-4 text-blue-600" />
+        <h2 className="text-sm font-semibold text-slate-900">Overseas Voter (OV) Record Matches</h2>
+      </div>
+      <p className="mt-1 text-xs text-slate-400">
+        When a migrated record matches both a local voter and an overseas voter, the local record is
+        annotated as OV and both records are retained rather than merged or discarded.
+      </p>
+
+      <div className="mt-3 overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-slate-200">
+              <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Local Record</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">OV Record</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Match Score</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Status</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Action</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100">
+            {OV_MATCHES.map((m) => {
+              const isAnnotated = Boolean(annotated[m.key])
+              return (
+                <tr key={m.key} className="transition-colors hover:bg-slate-50">
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-slate-900">{m.localName}</p>
+                      {isAnnotated && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+                          <GlobeIcon className="h-3 w-3" />
+                          OV
+                        </span>
+                      )}
+                    </div>
+                    <p className="flex items-center gap-1 text-xs text-slate-400">
+                      {m.localVrn} · <MapPinIcon className="h-3 w-3" /> {m.localPrecinct}
+                    </p>
+                  </td>
+                  <td className="px-3 py-3">
+                    <p className="text-sm text-slate-700">{m.ovVrn}</p>
+                    <p className="text-xs text-slate-400">{m.ovPost}</p>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-sm font-semibold text-slate-700">{m.matchScore}%</td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        isAnnotated ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                      }`}
+                    >
+                      {isAnnotated ? 'Annotated' : 'Pending Review'}
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <button
+                      type="button"
+                      disabled={isAnnotated}
+                      onClick={() => handleAccept(m.key)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <CheckCircleIcon className="h-3.5 w-3.5 text-emerald-500" />
+                      {isAnnotated ? 'Both Records Accepted' : 'Accept Both & Annotate'}
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
 
@@ -272,6 +400,8 @@ function ImportDataTab() {
           </table>
         </div>
       </div>
+
+      <OvAnnotationCard />
     </div>
   )
 }
