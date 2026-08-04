@@ -1,6 +1,7 @@
 import {
   ShieldCheckIcon,
   ArrowRightIcon,
+  FingerprintMark,
 } from '../components/icons'
 import BrandLockup from '../components/BrandLockup'
 import groupIcon from '../assets/Group.png'
@@ -32,7 +33,7 @@ function RoleCard({ icon, image, iconBg, iconColor, title, description, actionLa
   )
 }
 
-export default function RoleSelect({ onSelectUser, onSelectAdmin }) {
+export default function RoleSelect({ onSelectUser, onSelectAdmin, onSelectElectionDay }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50/40">
       <header className="border-b border-slate-200/80">
@@ -54,7 +55,7 @@ export default function RoleSelect({ onSelectUser, onSelectAdmin }) {
           Please select how you'd like to continue.
         </p>
 
-        <div className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="mt-10 grid w-full grid-cols-1 gap-6 sm:grid-cols-3">
           <RoleCard
             image={groupIcon}
             iconBg="bg-blue-50"
@@ -62,6 +63,15 @@ export default function RoleSelect({ onSelectUser, onSelectAdmin }) {
             description="Register to vote or check the status of your existing voter registration."
             actionLabel="Continue as Voter"
             onClick={onSelectUser}
+          />
+          <RoleCard
+            icon={FingerprintMark}
+            iconBg="bg-emerald-50"
+            iconColor="text-emerald-600"
+            title="Election Day"
+            description="Verify voter identity and eligibility at the polling place on election day."
+            actionLabel="Open Verification Kiosk"
+            onClick={onSelectElectionDay}
           />
           <RoleCard
             icon={ShieldCheckIcon}

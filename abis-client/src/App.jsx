@@ -6,6 +6,7 @@ import Intro from './pages/user/Intro'
 import TermsCon from './pages/user/TermsCon'
 import Step1 from './pages/user/Step1'
 import CorrectionEdit from './pages/user/CorrectionEdit'
+import StatusLookup from './pages/user/StatusLookup'
 import Step2 from './pages/user/Step2'
 import Step3 from './pages/user/Step3'
 import Step4 from './pages/user/Step4'
@@ -31,6 +32,10 @@ function App() {
   const [dashboardTab, setDashboardTab] = useState('Overview')
   const [regTypes, setRegTypes] = useState(['new'])
   const [correctionFields, setCorrectionFields] = useState([])
+
+  if (step === 'electionDay') {
+    return <StatusLookup onBack={() => setStep('role')} />
+  }
 
   if (step === 'admin') {
     const handleAdminLogout = () => setStep('role')
@@ -112,7 +117,7 @@ function App() {
       <Step5
         onBack={() => setStep('step4')}
         onSelectFace={() => setStep('step6')}
-        onSelectFingerprint={() => setStep('landing')}
+        onSelectFingerprint={() => setStep('step7')}
       />
     )
   }
@@ -199,6 +204,7 @@ function App() {
     <RoleSelect
       onSelectUser={() => setStep('landing')}
       onSelectAdmin={() => setStep('admin')}
+      onSelectElectionDay={() => setStep('electionDay')}
     />
   )
 }

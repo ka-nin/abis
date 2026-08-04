@@ -21,6 +21,12 @@ const TYPE_CONTENT = {
     description: 'Your voter registration record has been reactivated and is now active.',
     numberLabel: 'Voter Registration Number',
   },
+  validation: {
+    title: 'Biometrics Validated!',
+    description:
+      'Your biometric record has been completed and validated under R.A. 10367. Your registration remains active.',
+    numberLabel: 'Voter Registration Number',
+  },
   correction: {
     title: 'Correction Submitted!',
     description:

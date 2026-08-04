@@ -7,6 +7,7 @@ import {
   InfoCircleIcon,
   MapPinIcon,
   RefreshIcon,
+  ShieldCheckIcon,
   SwapIcon,
   UserIcon,
   UsersIcon,
@@ -71,6 +72,14 @@ const APPLICATION_TYPES = [
     title: 'Reactivation',
     description:
       'For applicants whose records have been deactivated under Section 27 of R.A. 8189, Sections 3 and 10 of R.A. 10367, and Section 14 of R.A. 9189 as amended by R.A. 10590.',
+    categories: ['local', 'rap', 'overseas'],
+  },
+  {
+    key: 'validation',
+    icon: ShieldCheckIcon,
+    title: 'Validation of Biometrics',
+    description:
+      'For registered voters with incomplete or unvalidated biometrics under R.A. 10367, who need to complete their record to avoid deactivation.',
     categories: ['local', 'rap', 'overseas'],
   },
   {

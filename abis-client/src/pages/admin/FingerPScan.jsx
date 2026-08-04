@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FingerprintMark, WifiIcon } from '../../components/icons'
+import { FingerprintMark, WifiIcon, CheckCircleIcon, XCircleIcon, AlertTriangleIcon } from '../../components/icons'
 
 const TODAY_STATS = [
   { key: 'scans', label: 'Scans', value: '1,842' },
@@ -8,6 +8,38 @@ const TODAY_STATS = [
   { key: 'avgQuality', label: 'Avg Quality', value: '84.2' },
   { key: 'rejections', label: 'Rejections', value: '44' },
 ]
+
+const LATEST_CAPTURE = {
+  vrn: 'VRN-2026-005512',
+  nfiq: 62,
+  minutiaeCount: 48,
+  ridgeClarity: 81,
+}
+
+const DECISION_STYLES = {
+  Accepted: 'bg-emerald-50 text-emerald-700',
+  Rejected: 'bg-red-50 text-red-600',
+  Flagged: 'bg-amber-50 text-amber-700',
+}
+
+function QualityMetric({ label, value, unit = '', pass }) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="text-xs text-slate-400">{label}</p>
+      <p className="mt-1 text-xl font-bold text-slate-900">
+        {value}
+        {unit}
+      </p>
+      <span
+        className={`mt-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+          pass ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
+        }`}
+      >
+        {pass ? 'Pass' : 'Below Threshold'}
+      </span>
+    </div>
+  )
+}
 
 function Field({ label, value, onChange }) {
   return (
@@ -31,6 +63,8 @@ export default function FingerPScan() {
     timeout: '30',
   })
 
+  const [decision, setDecision] = useState(null)
+
   const updateField = (key) => (event) => {
     setSettings((prev) => ({ ...prev, [key]: event.target.value }))
   }
@@ -46,6 +80,9 @@ export default function FingerPScan() {
   const handleCalibrate = () => {
     // Start device calibration routine
   }
+
+  const qualityThreshold = Number(settings.qualityThreshold) || 0
+  const nfiqPass = LATEST_CAPTURE.nfiq >= qualityThreshold
 
   return (
     <div className="max-h-[calc(100vh-260px)] overflow-y-auto pr-1">
@@ -116,6 +153,53 @@ export default function FingerPScan() {
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold text-slate-900">Latest Capture Quality</h2>
+            <p className="text-xs text-slate-400">{LATEST_CAPTURE.vrn} · NFIQ 2.0 scale (0–100, higher is better)</p>
+          </div>
+          {decision && (
+            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${DECISION_STYLES[decision]}`}>
+              {decision}
+            </span>
+          )}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <QualityMetric label="NFIQ 2.0 Score" value={LATEST_CAPTURE.nfiq} pass={nfiqPass} />
+          <QualityMetric label="Minutiae Count" value={LATEST_CAPTURE.minutiaeCount} pass={LATEST_CAPTURE.minutiaeCount >= 30} />
+          <QualityMetric label="Ridge Clarity" value={LATEST_CAPTURE.ridgeClarity} unit="%" pass={LATEST_CAPTURE.ridgeClarity >= 60} />
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Accepted' ? null : 'Accepted'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
+          >
+            <CheckCircleIcon className="h-4 w-4" />
+            Accept
+          </button>
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Rejected' ? null : 'Rejected'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+          >
+            <XCircleIcon className="h-4 w-4" />
+            Reject
+          </button>
+          <button
+            type="button"
+            onClick={() => setDecision((d) => (d === 'Flagged' ? null : 'Flagged'))}
+            className="inline-flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 transition-colors hover:bg-amber-100"
+          >
+            <AlertTriangleIcon className="h-4 w-4" />
+            Flag for Review
+          </button>
         </div>
       </div>
     </div>

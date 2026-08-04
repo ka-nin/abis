@@ -5,7 +5,7 @@ import RegistrationStepper from '../../components/RegistrationStepper'
 
 const STEP_DURATION_MS = 2000 // temporary fixed delay per check
 
-const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas']
+const EXISTING_RECORD_TYPES = ['transfer', 'reactivation', 'correction', 'overseas', 'validation']
 
 const NEW_RECORD_CHECKS = [
   'Connecting to PSA National Registry',

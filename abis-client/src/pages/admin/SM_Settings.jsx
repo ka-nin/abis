@@ -3,8 +3,10 @@ import AdminLayout from '../../layouts/AdminLayout'
 import { RefreshIcon } from '../../components/icons'
 import SM_AuditLogs from './SM_AuditLogs'
 import SM_UserManagement from './SM_UserManagement'
+import SM_AccessControl from './SM_AccessControl'
+import SM_MatchingConfig from './SM_MatchingConfig'
 
-const TABS = ['Settings', 'Audit Logs', 'User Management']
+const TABS = ['Settings', 'Audit Logs', 'User Management', 'Access Control', 'Matching Configuration']
 
 const SYSTEM_INFO_READONLY = [
   { key: 'organization', label: 'Organization', value: 'National Election Commission (COMELEC)' },
@@ -171,6 +173,8 @@ export default function SM_Settings({ onNavigate, onLogout, onBellClick }) {
       {activeTab === 'Settings' && <SettingsTab />}
       {activeTab === 'Audit Logs' && <SM_AuditLogs />}
       {activeTab === 'User Management' && <SM_UserManagement />}
+      {activeTab === 'Access Control' && <SM_AccessControl />}
+      {activeTab === 'Matching Configuration' && <SM_MatchingConfig />}
     </AdminLayout>
   )
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -6,6 +6,7 @@ import {
   UserIcon,
   MapPinIcon,
   ShieldIcon,
+  ShieldCheckIcon,
   IdCardIcon,
   SwapIcon,
   RefreshIcon,
@@ -21,7 +22,16 @@ const TYPE_LABELS = {
   correction: 'Correction of Entries',
   sk: 'Sangguniang Kabataan Registration',
   overseas: 'Certification as Overseas Voter',
+  validation: 'Validation of Biometrics',
 }
+
+const VALIDATION_REASONS = [
+  'Biometric capture device was unavailable during original registration',
+  'Applicant was previously unable to complete fingerprint/iris capture',
+  'Prior medical exemption has been lifted',
+  'Record flagged for validation by COMELEC',
+  'Other',
+]
 
 const SPECIAL_CATEGORIES = [
   'Person with Disability (PWD)',
@@ -30,6 +40,7 @@ const SPECIAL_CATEGORIES = [
   'Senior Citizen (60 years old & above)',
   'Indigenous Cultural Community / Indigenous People (ICC/IP)',
   'Solo Parent',
+  'Person Deprived of Liberty (PDL)',
 ]
 
 const CORRECTABLE_FIELDS = ['Name', 'Date of Birth', 'Civil Status', 'Address', 'Precinct Assignment', 'Other']
@@ -145,6 +156,92 @@ function RadioOption({ name, checked, onChange, label }) {
   )
 }
 
+const SIGNATURE_CANVAS_WIDTH = 520
+const SIGNATURE_CANVAS_HEIGHT = 128
+
+function SignaturePad() {
+  const canvasRef = useRef(null)
+  const drawingRef = useRef(false)
+  const [hasSignature, setHasSignature] = useState(false)
+
+  const getPoint = (event) => {
+    const canvas = canvasRef.current
+    const rect = canvas.getBoundingClientRect()
+    const clientX = event.touches ? event.touches[0].clientX : event.clientX
+    const clientY = event.touches ? event.touches[0].clientY : event.clientY
+    return {
+      x: (clientX - rect.left) * (canvas.width / rect.width),
+      y: (clientY - rect.top) * (canvas.height / rect.height),
+    }
+  }
+
+  const startDrawing = (event) => {
+    event.preventDefault()
+    const ctx = canvasRef.current.getContext('2d')
+    const { x, y } = getPoint(event)
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    drawingRef.current = true
+  }
+
+  const draw = (event) => {
+    if (!drawingRef.current) return
+    event.preventDefault()
+    const ctx = canvasRef.current.getContext('2d')
+    const { x, y } = getPoint(event)
+    ctx.strokeStyle = '#0f172a'
+    ctx.lineWidth = 2
+    ctx.lineCap = 'round'
+    ctx.lineTo(x, y)
+    ctx.stroke()
+    setHasSignature(true)
+  }
+
+  const stopDrawing = () => {
+    drawingRef.current = false
+  }
+
+  const handleClear = () => {
+    const canvas = canvasRef.current
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    setHasSignature(false)
+  }
+
+  return (
+    <div>
+      <span className="text-sm text-slate-700">
+        Signature<span className="ml-0.5 text-red-500">*</span>
+      </span>
+      <div className="relative mt-1.5 h-32 w-full overflow-hidden rounded-xl border border-slate-300 bg-white">
+        <canvas
+          ref={canvasRef}
+          width={SIGNATURE_CANVAS_WIDTH}
+          height={SIGNATURE_CANVAS_HEIGHT}
+          className="h-full w-full cursor-crosshair touch-none"
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={stopDrawing}
+        />
+        {!hasSignature && (
+          <p className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-slate-300">
+            Sign here
+          </p>
+        )}
+      </div>
+      <div className="mt-1.5 flex items-center justify-between">
+        <p className="text-xs text-slate-400">Signature above printed name</p>
+        <button type="button" onClick={handleClear} className="text-xs font-semibold text-blue-600 hover:underline">
+          Clear
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const todayLabel = new Date().toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric',
@@ -159,8 +256,10 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
   const isCorrection = has('correction')
   const isSK = has('sk')
   const isOverseas = has('overseas')
+  const isValidation = has('validation')
 
   const [specialCategories, setSpecialCategories] = useState([])
+  const [validationReason, setValidationReason] = useState('')
   const [correctFields, setCorrectFields] = useState([])
   const [transferScope, setTransferScope] = useState('')
   const [formerRecordType, setFormerRecordType] = useState('')
@@ -204,10 +303,11 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
       ? `Combined Application: ${types.map((t) => TYPE_LABELS[t] ?? t).join(' + ')}`
       : `Application for ${TYPE_LABELS[types[0]] ?? 'Voter Registration'}`
 
-  const showAddress = !isCorrection && !isOverseas && !isTransfer
+  const showAddress = !isCorrection && !isOverseas && !isTransfer && !isValidation
 
   const sections = [
     isReactivation && 'reactivation',
+    isValidation && 'validationDetails',
     'personal',
     isTransfer && 'previousRecord',
     isCorrection && 'correction',
@@ -287,6 +387,52 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
                 <Field label="Explanation / Supporting Details">
                   <Textarea rows={3} placeholder="Briefly explain the circumstances for your reactivation request" />
                 </Field>
+              </div>
+            </Section>
+          )}
+
+          {isValidation && (
+            <Section
+              roman={romanOf('validationDetails')}
+              icon={ShieldCheckIcon}
+              title="APPLICATION FOR VALIDATION OF BIOMETRICS (R.A. 10367)"
+            >
+              <div className="flex flex-col gap-4 text-left">
+                <p className="text-sm text-slate-500">
+                  For registered voters whose biometrics were not completed or validated at the time of
+                  registration. Failure to validate before the deadline set by the Commission may result in
+                  deactivation of your registration record.
+                </p>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field label="Existing Precinct No. / VRN" required>
+                    <TextInput placeholder="e.g. VRN-2019-441207" />
+                  </Field>
+                  <Field label="Date of Original Registration">
+                    <TextInput type="date" />
+                  </Field>
+                </div>
+
+                <Field label="Reason Biometrics Were Incomplete" required>
+                  <Select
+                    value={validationReason}
+                    onChange={(event) => setValidationReason(event.target.value)}
+                  >
+                    <option value="" disabled>
+                      Select reason
+                    </option>
+                    {VALIDATION_REASONS.map((reason) => (
+                      <option key={reason}>{reason}</option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3.5 text-sm text-blue-700">
+                  <ShieldCheckIcon className="mt-0.5 h-4 w-4 shrink-0" />
+                  This application does not change your registered address or personal details — it only
+                  completes your biometric record. Please proceed to the biometric capture steps to finish
+                  validation.
+                </div>
               </div>
             </Section>
           )}
@@ -1298,12 +1444,16 @@ export default function Step1({ types: rawTypes, onBack, onContinue }) {
             )}
 
             <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-[1fr_260px]">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Signature above printed name"
-                  className="w-full border-b border-slate-300 bg-transparent pb-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
-                />
+              <div className="flex flex-col gap-4">
+                <SignaturePad />
+                <label className="block">
+                  <span className="text-xs text-slate-500">Printed Name</span>
+                  <input
+                    type="text"
+                    placeholder="Full name as printed above"
+                    className="mt-1.5 w-full border-b border-slate-300 bg-transparent pb-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none"
+                  />
+                </label>
               </div>
               <div className="flex items-baseline justify-between gap-3 border-b border-slate-300 pb-2">
                 <span className="text-sm text-slate-500">Date</span>

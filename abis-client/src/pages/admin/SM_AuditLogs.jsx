@@ -1,4 +1,5 @@
-import { DownloadIcon } from '../../components/icons'
+import { useMemo, useState } from 'react'
+import { DownloadIcon, SearchIcon } from '../../components/icons'
 
 const AUDIT_LOGS = [
   { timestamp: '09:14:23', level: 'INFO', user: 'admin.reyes', action: 'Export', details: 'Voter records export — Region IV-A' },
@@ -8,6 +9,8 @@ const AUDIT_LOGS = [
   { timestamp: '08:22:01', level: 'ERROR', user: 'unknown', action: 'Login', details: '3 failed attempts from 203.112.14.8' },
   { timestamp: '08:00:00', level: 'INFO', user: 'system', action: 'Backup', details: 'Automated full backup completed (840 GB)' },
 ]
+
+const LEVELS = ['All Levels', 'INFO', 'WARN', 'ERROR']
 
 const LEVEL_STYLES = {
   INFO: 'border border-blue-200 bg-blue-50 text-blue-600',
@@ -28,10 +31,26 @@ function handleExport() {
 }
 
 export default function SM_AuditLogs() {
+  const [search, setSearch] = useState('')
+  const [levelFilter, setLevelFilter] = useState('All Levels')
+
+  const filteredLogs = useMemo(() => {
+    const query = search.trim().toLowerCase()
+    return AUDIT_LOGS.filter((log) => {
+      const matchesLevel = levelFilter === 'All Levels' || log.level === levelFilter
+      const matchesSearch =
+        !query ||
+        log.user.toLowerCase().includes(query) ||
+        log.action.toLowerCase().includes(query) ||
+        log.details.toLowerCase().includes(query)
+      return matchesLevel && matchesSearch
+    })
+  }, [search, levelFilter])
+
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
       <div className="rounded-2xl border border-slate-200 bg-white p-5">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-sm font-semibold text-slate-900">System Audit Logs</h2>
           <button
             type="button"
@@ -41,6 +60,29 @@ export default function SM_AuditLogs() {
             <DownloadIcon className="h-4 w-4" />
             Export
           </button>
+        </div>
+
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <div className="relative w-full max-w-xs">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by user, action, or details..."
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+          <select
+            value={levelFilter}
+            onChange={(event) => setLevelFilter(event.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          >
+            {LEVELS.map((level) => (
+              <option key={level}>{level}</option>
+            ))}
+          </select>
+          <p className="text-sm text-slate-400">{filteredLogs.length} of {AUDIT_LOGS.length} entries</p>
         </div>
 
         <div className="overflow-x-auto">
@@ -55,7 +97,7 @@ export default function SM_AuditLogs() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {AUDIT_LOGS.map((log) => (
+              {filteredLogs.map((log) => (
                 <tr key={`${log.timestamp}-${log.user}`} className="transition-colors hover:bg-slate-50">
                   <td className="whitespace-nowrap px-3 py-3 font-mono text-sm text-slate-700">{log.timestamp}</td>
                   <td className="whitespace-nowrap px-3 py-3">
@@ -66,6 +108,13 @@ export default function SM_AuditLogs() {
                   <td className="px-3 py-3 text-sm text-slate-400">{log.details}</td>
                 </tr>
               ))}
+              {filteredLogs.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-3 py-8 text-center text-sm text-slate-400">
+                    No audit log entries match your search.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
