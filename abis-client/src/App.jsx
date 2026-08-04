@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import RoleSelect from './pages/RoleSelect'
+import AdminLogin from './pages/Auth/AdminLogin'
 import ApplicationType from './pages/user/ApplicationType'
 import UserLanding from './pages/user/UserLanding'
 import Intro from './pages/user/Intro'
@@ -35,6 +36,10 @@ function App() {
 
   if (step === 'electionDay') {
     return <StatusLookup onBack={() => setStep('role')} />
+  }
+
+  if (step === 'adminLogin') {
+    return <AdminLogin onBack={() => setStep('role')} onLoginSuccess={() => setStep('admin')} />
   }
 
   if (step === 'admin') {
@@ -203,7 +208,7 @@ function App() {
   return (
     <RoleSelect
       onSelectUser={() => setStep('landing')}
-      onSelectAdmin={() => setStep('admin')}
+      onSelectAdmin={() => setStep('adminLogin')}
       onSelectElectionDay={() => setStep('electionDay')}
     />
   )

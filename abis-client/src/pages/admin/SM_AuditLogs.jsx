@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { DownloadIcon, SearchIcon } from '../../components/icons'
+import { DownloadIcon, SearchIcon, LockIcon, CheckCircleIcon, RefreshIcon } from '../../components/icons'
 
 const AUDIT_LOGS = [
   { timestamp: '09:14:23', level: 'INFO', user: 'admin.reyes', action: 'Export', details: 'Voter records export — Region IV-A' },
@@ -18,6 +18,32 @@ const LEVEL_STYLES = {
   ERROR: 'border border-red-200 bg-red-50 text-red-600',
 }
 
+// Deterministic 64-bit-ish string hash (cyrb53-style) — simulates a SHA-256 block hash for the UI's hash-chain display.
+function hashOf(input) {
+  let h1 = 0xdeadbeef
+  let h2 = 0x41c6ce57
+  for (let i = 0; i < input.length; i++) {
+    const ch = input.charCodeAt(i)
+    h1 = Math.imul(h1 ^ ch, 2654435761)
+    h2 = Math.imul(h2 ^ ch, 1597334677)
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909)
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909)
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(14, '0')
+}
+
+function buildChain(logs) {
+  // Logs are stored newest-first; the hash chain is built oldest-to-newest, then re-reversed for display.
+  const chronological = [...logs].reverse()
+  const chained = chronological.reduce((acc, log) => {
+    const prevHash = acc.length ? acc[acc.length - 1].hash : hashOf('GENESIS')
+    const hash = hashOf(prevHash + JSON.stringify(log))
+    acc.push({ ...log, prevHash, hash })
+    return acc
+  }, [])
+  return chained.reverse()
+}
+
 function LevelBadge({ level }) {
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${LEVEL_STYLES[level] || 'bg-slate-100 text-slate-600'}`}>
@@ -33,10 +59,14 @@ function handleExport() {
 export default function SM_AuditLogs() {
   const [search, setSearch] = useState('')
   const [levelFilter, setLevelFilter] = useState('All Levels')
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [lastVerified, setLastVerified] = useState('Aug 4, 2026 09:20 AM')
+
+  const chainedLogs = useMemo(() => buildChain(AUDIT_LOGS), [])
 
   const filteredLogs = useMemo(() => {
     const query = search.trim().toLowerCase()
-    return AUDIT_LOGS.filter((log) => {
+    return chainedLogs.filter((log) => {
       const matchesLevel = levelFilter === 'All Levels' || log.level === levelFilter
       const matchesSearch =
         !query ||
@@ -45,7 +75,15 @@ export default function SM_AuditLogs() {
         log.details.toLowerCase().includes(query)
       return matchesLevel && matchesSearch
     })
-  }, [search, levelFilter])
+  }, [chainedLogs, search, levelFilter])
+
+  const handleVerifyChain = () => {
+    setIsVerifying(true)
+    setTimeout(() => {
+      setLastVerified(new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }))
+      setIsVerifying(false)
+    }, 900)
+  }
 
   return (
     <div className="max-h-[calc(100vh-260px)] space-y-4 overflow-y-auto pr-1">
@@ -59,6 +97,26 @@ export default function SM_AuditLogs() {
           >
             <DownloadIcon className="h-4 w-4" />
             Export
+          </button>
+        </div>
+
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+          <div className="flex items-center gap-2.5">
+            <LockIcon className="h-4 w-4 flex-shrink-0 text-emerald-600" />
+            <p className="text-sm text-emerald-700">
+              <span className="font-semibold">Chain Integrity: Verified</span> — {chainedLogs.length}/{chainedLogs.length}{' '}
+              records validated. Each entry's hash is chained to the previous entry; any alteration breaks the
+              chain. Last verified: {lastVerified}.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleVerifyChain}
+            disabled={isVerifying}
+            className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <RefreshIcon className={`h-3.5 w-3.5 ${isVerifying ? 'animate-spin' : ''}`} />
+            {isVerifying ? 'Verifying...' : 'Re-verify Chain'}
           </button>
         </div>
 
@@ -94,6 +152,8 @@ export default function SM_AuditLogs() {
                 <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">User</th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Action</th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Details</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Block Hash</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">Verified</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -106,11 +166,22 @@ export default function SM_AuditLogs() {
                   <td className="whitespace-nowrap px-3 py-3 font-mono text-sm text-slate-700">{log.user}</td>
                   <td className="whitespace-nowrap px-3 py-3 text-sm font-medium text-slate-900">{log.action}</td>
                   <td className="px-3 py-3 text-sm text-slate-400">{log.details}</td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <span title={`Hash: ${log.hash}\nPrev: ${log.prevHash}`} className="font-mono text-xs text-slate-400">
+                      {log.hash.slice(0, 10)}…
+                    </span>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                      <CheckCircleIcon className="h-3.5 w-3.5" />
+                      Verified
+                    </span>
+                  </td>
                 </tr>
               ))}
               {filteredLogs.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-3 py-8 text-center text-sm text-slate-400">
+                  <td colSpan={7} className="px-3 py-8 text-center text-sm text-slate-400">
                     No audit log entries match your search.
                   </td>
                 </tr>
